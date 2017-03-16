@@ -63,6 +63,7 @@ uint8_t buflen = VW_MAX_MESSAGE_LEN;
 String buf_string;
 int command_hesh; 
 int current_comand;
+bool training_mode = false;
 
 //*************************** Variables end *********************************
 
@@ -250,8 +251,12 @@ void loop()
         turn_PWM -= 1;
       break;  
       
+      case (0):            // t
+        training_mode = true;
+      break;      
+      
       default:
-        if (command_hesh == current_comand)
+        if ((command_hesh == current_comand)||(training_mode))
         {
             switch (command_hesh)
             {
@@ -283,7 +288,6 @@ void loop()
           stop_car();
           delay(200);
         }
-        
     }    
     
 
