@@ -34,12 +34,15 @@ String msg;
 
 // **** End Keypad vars ****
 
-
-
+  unsigned long t_new, t_old;
+  float Vx_new =0;
+  float accY_old;
 
 void setup() 
 {
 
+   
+  
     loopCount = 0;
     startTime = millis();
     msg = "";
@@ -103,6 +106,9 @@ void checkSettings()
   Serial.println(mpu.getAccelOffsetZ());
   
   Serial.println();
+  Vector normAccel = mpu.readNormalizeAccel();
+  accY_old = normAccel.YAxis;
+  t_old = millis();
 }
 
 void loop()
@@ -178,14 +184,35 @@ void loop()
 
   Serial.println(rawAccel.ZAxis);
   */
-  Serial.print(" Xnorm = ");
+
+  t_new = millis();
+/*  Serial.print(" t_new = ");
+  Serial.println(t_new); 
+  Serial.print(" t_old = ");
+  Serial.println(t_old); 
+  Serial.print(" Ynorm = ");
+  Serial.print(normAccel.YAxis);
+  Serial.print(" accY_old = ");
+  Serial.print(accY_old);  
+  */
+ Vx_new += (t_new/1000-t_old/1000)*(normAccel.YAxis+accY_old)/2;
+  t_old = t_new;
+  accY_old = normAccel.YAxis;
+  
+  
+  Serial.print(" Vy = ");
+  Serial.println(Vx_new);
+/*  Serial.print(" Xnorm = ");
   Serial.print(normAccel.XAxis);
   Serial.print(" Ynorm = ");
   Serial.print(normAccel.YAxis);
   Serial.print(" Znorm = ");
   Serial.println(normAccel.ZAxis);
+*/
+
   
-  delay(100);
+  
+  //delay(1);
 }
 
 

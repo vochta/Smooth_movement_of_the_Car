@@ -123,6 +123,13 @@ void checkSettings()
 	case MPU6050_RANGE_2G:			   Serial.println("+/- 2 g"); break;
   }	 
 
+  mpu.setXGyroOffset(25);
+mpu.setYGyroOffset(45);
+mpu.setZGyroOffset(44);
+mpu.setXAccelOffset(-5858);
+mpu.setYAccelOffset(1349);
+mpu.setZAccelOffset(1190);
+  
   Serial.print(" * Accelerometer offsets:	  ");
   Serial.print(mpu.getAccelOffsetX());
   Serial.print(" / ");

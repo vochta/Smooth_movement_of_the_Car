@@ -1,0 +1,29 @@
+Send any character to start sketch.
+
+
+MPU6050 Calibration Sketch
+
+Your MPU6050 should be placed in horizontal position, with package letters facing up. 
+Don't touch it until you see a finish message.
+
+MPU6050 connection successful
+
+Reading sensors for first time...
+
+Calculating offsets...
+...
+...
+...
+...
+...
+...
+...
+
+FINISHED!
+
+Sensor readings with offsets:	6	-6	16387	-1	-1	0
+Your offsets:	-5858	1349	1190	25	45	44
+
+Data is printed as: acelX acelY acelZ giroX giroY giroZ
+Check that your sensor readings are close to 0 0 16384 0 0 0
+If calibration was succesful write down your offsets so you can set them in your projects using something similar to mpu.setXAccelOffset(youroffset)
