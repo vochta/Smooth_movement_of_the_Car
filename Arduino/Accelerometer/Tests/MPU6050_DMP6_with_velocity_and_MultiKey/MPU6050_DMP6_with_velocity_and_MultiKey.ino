@@ -1,45 +1,4 @@
-// I2C device class (I2Cdev) demonstration Arduino sketch for MPU6050 class using DMP (MotionApps v2.0)
-// 6/21/2012 by Jeff Rowberg <jeff@rowberg.net>
-// Updates should (hopefully) always be available at https://github.com/jrowberg/i2cdevlib
-//
-// Changelog:
-//      2013-05-08 - added seamless Fastwire support
-//                 - added note about gyro calibration
-//      2012-06-21 - added note about Arduino 1.0.1 + Leonardo compatibility error
-//      2012-06-20 - improved FIFO overflow handling and simplified read process
-//      2012-06-19 - completely rearranged DMP initialization code and simplification
-//      2012-06-13 - pull gyro and accel data from FIFO packet instead of reading directly
-//      2012-06-09 - fix broken FIFO read sequence and change interrupt detection to RISING
-//      2012-06-05 - add gravity-compensated initial reference frame acceleration output
-//                 - add 3D math helper file to DMP6 example sketch
-//                 - add Euler output and Yaw/Pitch/Roll output formats
-//      2012-06-04 - remove accel offset clearing for better results (thanks Sungon Lee)
-//      2012-06-01 - fixed gyro sensitivity to be 2000 deg/sec instead of 250
-//      2012-05-30 - basic DMP initialization working
 
-/* ============================================
-I2Cdev device library code is placed under the MIT license
-Copyright (c) 2012 Jeff Rowberg
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-===============================================
-*/
 
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
@@ -61,23 +20,7 @@ THE SOFTWARE.
 MPU6050 mpu;
 //MPU6050 mpu(0x69); // <-- use for AD0 high
 
-/* =========================================================================
-   NOTE: In addition to connection 3.3v, GND, SDA, and SCL, this sketch
-   depends on the MPU-6050's INT pin being connected to the Arduino's
-   external interrupt #0 pin. On the Arduino Uno and Mega 2560, this is
-   digital I/O pin 2.
- * ========================================================================= */
 
-/* =========================================================================
-   NOTE: Arduino v1.0.1 with the Leonardo board generates a compile error
-   when using Serial.write(buf, len). The Teapot output uses this method.
-   The solution requires a modification to the Arduino USBAPI.h file, which
-   is fortunately simple, but annoying. This will be fixed in the next IDE
-   release. For more info, see these links:
-
-   http://arduino.cc/forum/index.php/topic,109987.0.html
-   http://code.google.com/p/arduino/issues/detail?id=958
- * ========================================================================= */
 
 
 
@@ -142,10 +85,6 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 // packet structure for InvenSense teapot demo
 uint8_t teapotPacket[14] = { '$', 0x02, 0,0, 0,0, 0,0, 0,0, 0x00, 0x00, '\r', '\n' };
 
-  unsigned long t_new, t_old, Vtimer;
-  float Vx_new =0;
-  float accY_old;
-  
 // **** Begin Keypad vars ****
 
 
@@ -167,6 +106,14 @@ unsigned long startTime;
 String msg;
 
 // **** End Keypad vars ****
+
+// **** Begin v_measurement vars ****
+
+  unsigned long t_current, t_old, Vtimer, t_start, t_measurement = 100;
+  float Vy_current =0, v_start, v_target = 10;
+  float accY_old;
+  bool start_measurement = false;
+// **** End v_measurement vars ****
 
 // ================================================================
 // ===               INTERRUPT DETECTION ROUTINE                ===
@@ -292,61 +239,7 @@ mpu.setZAccelOffset(1190);
 
 void loop() {
 
-//**** Begin Keypad loop ******
-    loopCount++;
-    if ( (millis()-startTime)>5000 ) {
-        Serial.print("Average loops per second = ");
-        Serial.println(loopCount/5);
-        startTime = millis();
-        loopCount = 0;
-    }
 
-    // Fills kpd.key[ ] array with up-to 10 active keys.
-    // Returns true if there are ANY active keys.
-    if (kpd.getKeys())
-    {
-        for (int i=0; i<LIST_MAX; i++)   // Scan the whole key list.
-        {
-            if ( kpd.key[i].stateChanged )   // Only find keys that have changed state.
-            {
-                switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
-                    case PRESSED:
-                    msg = " PRESSED.";
-                    switch (kpd.key[i].kchar) {
-                        case '2':
-                            digitalWrite(PIN_FORWARD, LOW);
-                        break;
-                        case '4':
-                            digitalWrite(PIN_BACKWARD, LOW);
-                        break;
-                    }
-                    break;
-                    case HOLD:
-                    msg = " HOLD.";
-                    break;
-                    case RELEASED:
-                    msg = " RELEASED.";
-                    switch (kpd.key[i].kchar) {
-                        case '2':
-                            digitalWrite(PIN_FORWARD, HIGH);
-                        break;
-                        case '4':
-                            digitalWrite(PIN_BACKWARD, HIGH);
-                        break;
-                    }
-                    break;
-                    case IDLE:
-                    msg = " IDLE.";
-                }
-                Serial.println(i);
-                Serial.print("Key ");
-                Serial.print(kpd.key[i].kchar);
-                Serial.println(msg);
-                
-            }
-        }
-    }
-//**** End Keypad loop
 
 
 
@@ -354,17 +247,86 @@ void loop() {
     if (!dmpReady) return;
 
     // wait for MPU interrupt or extra packet(s) available
-    while (!mpuInterrupt && fifoCount < packetSize) {
+  while (!mpuInterrupt && fifoCount < packetSize) {
         // other program behavior stuff here
         // .
-        // .
-        // .
-        // if you are really paranoid you can frequently test in between other
-        // stuff to see if mpuInterrupt is true, and if so, "break;" from the
-        // while() loop to immediately process the MPU data
-        // .
-        // .
-        // .
+        //**** Begin Keypad loop ******
+
+        // Fills kpd.key[ ] array with up-to 10 active keys.
+        // Returns true if there are ANY active keys.
+        if (kpd.getKeys())
+        {
+            for (int i=0; i<LIST_MAX; i++)   // Scan the whole key list.
+            {
+                if ( kpd.key[i].stateChanged )   // Only find keys that have changed state.
+                {
+                    switch (kpd.key[i].kstate) {  // Report active key state : IDLE, PRESSED, HOLD, or RELEASED
+                        case PRESSED:
+                        msg = " PRESSED.";
+                        switch (kpd.key[i].kchar) {
+                            case '2':
+                                t_start = millis();
+                                v_start = Vy_current;
+                                digitalWrite(PIN_FORWARD, LOW);
+                                start_measurement = true;
+                            break;
+                            case '4':
+                                digitalWrite(PIN_BACKWARD, LOW);
+                            break;
+                        }
+                        break;
+                        case HOLD:
+                        msg = " HOLD.";
+                        break;
+                        case RELEASED:
+                        msg = " RELEASED.";
+                        switch (kpd.key[i].kchar) {
+                            case '2':
+                                digitalWrite(PIN_FORWARD, HIGH);
+                            break;
+                            case '4':
+                                digitalWrite(PIN_BACKWARD, HIGH);
+                            break;
+                        }
+                        break;
+                        case IDLE:
+                        msg = " IDLE.";
+                    }
+                    Serial.println(i);
+                    Serial.print("Key ");
+                    Serial.print(kpd.key[i].kchar);
+                    Serial.println(msg);
+                    
+                }
+            }  
+        }
+        //**** End Keypad loop
+       
+        //**** Begin v_measurement loop
+        if ((start_measurement == true)&&((millis()-t_start) > t_measurement))
+        {
+            // look v_current
+            if (Vy_current-v_start > v_target)
+            {
+                Serial.println("Ok");
+            //    Serial.println(Vy_current);
+                Serial.println(Vy_current-v_start);
+                Serial.println(millis()-t_start);
+                delay(2000);
+            }
+            else
+            {
+                Serial.println("Not Ok");
+             //   Serial.println(Vy_current);
+                Serial.println(Vy_current-v_start);
+                Serial.println(millis()-t_start);
+                delay(2000);
+            }        
+            start_measurement = false;
+        }        
+        //**** End v_measurement loop
+        
+        Serial.println("y ");
     }
 
     // reset interrupt flag and get INT_STATUS byte
@@ -436,24 +398,24 @@ void loop() {
             mpu.dmpGetAccel(&aa, fifoBuffer);
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-            Serial.print("areal\t");
+ /*           Serial.print("areal\t");
             Serial.print(aaReal.x);
             Serial.print("\t");
-            Serial.print(aaReal.y);
-            Serial.print("\t");
+      */ //     Serial.println(aaReal.y);
+      /*      Serial.print("\t");
             Serial.println(aaReal.z);
-
-            t_new = millis();
-             Vx_new += (t_new-t_old)*(aaReal.y+accY_old)/2000;
-  t_old = t_new;
+*/
+            t_current = millis();
+             Vy_current += (t_current-t_old)*(aaReal.y+accY_old)/2000;
+  t_old = t_current;
   accY_old = aaReal.y;
   if (t_old > Vtimer) 
   {
     Vtimer = Vtimer+40000;
-    Vx_new =0;
+    Vy_current =0;
   }
-  Serial.print(" Vy = ");
-  Serial.println(Vx_new);
+//  Serial.print(" Vy = ");
+//  Serial.println(Vx_new);
             
   /*          Serial.print("aa\t");
             Serial.print(aa.x);
@@ -479,12 +441,12 @@ void loop() {
             mpu.dmpGetGravity(&gravity, &q);
             mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
             mpu.dmpGetLinearAccelInWorld(&aaWorld, &aaReal, &q);
-            Serial.print("aworld\t");
+ /*           Serial.print("aworld\t");
             Serial.print(aaWorld.x);
             Serial.print("\t");
-            Serial.print(aaWorld.y);
-            Serial.print("\t");
-            Serial.println(aaWorld.z);
+ */           Serial.println(aaWorld.y);
+   /*         Serial.print("\t");
+            Serial.println(aaWorld.z); */
         #endif
     
         #ifdef OUTPUT_TEAPOT
@@ -501,9 +463,9 @@ void loop() {
             teapotPacket[11]++; // packetCount, loops at 0xFF on purpose
         #endif
 
-        // blink LED to indicate activity
-      /*  blinkState = !blinkState;
-        digitalWrite(LED_PIN, blinkState);  */
+
     }
+
+
 }
 
