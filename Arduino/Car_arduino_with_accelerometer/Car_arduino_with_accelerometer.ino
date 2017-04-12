@@ -5,6 +5,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
+
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
 #include "I2Cdev.h"
@@ -62,8 +63,10 @@ byte turn_PWM = 70;
 #define OLED_RESET 30
 
 // receiver pins:
-#define rx_pin 23
+#define rx_pin 23  // data pin
 
+
+// ******** Begin MPU6050 ******************
 // Arduino --> MPU6050 pins:
     // Arduino Nano:
     // A4 --> SDA
@@ -74,8 +77,12 @@ byte turn_PWM = 70;
     // A20 --> SDA
     // A21 --> SCL
     // D2 --> INT (interrupt, if needed)
+#define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
 
+// ******** End MPU6050 ******************
 
+#define LED 46  // just a LED to test the process (loop)
+   
 //*************************** Constants end *********************************
 
 
@@ -88,13 +95,13 @@ uint8_t buf[VW_MAX_MESSAGE_LEN];
 uint8_t buflen = VW_MAX_MESSAGE_LEN;
 String buf_string;
 int command_hesh; 
-int current_comand;
+int current_command;
 bool training_mode = false;
 
 
 // **** Begin v_measurement vars ****
 
-  unsigned long t_current, t_old, Vtimer, t_start, t_measurement = 100;
+  unsigned long t_current, t_old, Vtimer, t_command_execution_start = 0, t_measurement = 100;
   float Vy_current =0, v_start, v_target = 10;
   float accY_old;
   bool start_measurement = false;
@@ -120,10 +127,28 @@ float ypr[3];           // [yaw, pitch, roll]   yaw/pitch/roll container and gra
 
 // **** End acceleration vars ****
 
+
+//***** temp vars *****
+unsigned long t_loop_start = 0;
+unsigned long t_loop_finish = 0;
+
 //*************************** Variables end *********************************
 
 
+/*
+// ================================================================
+// ===               INTERRUPT DETECTION ROUTINE                ===
+// ================================================================
+
+
+volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
+void dmpDataReady() {
+    mpuInterrupt = true;
+}
+*/
+
 //*********************** Functions begin ********************************
+
 
 void stop_car()
 {
@@ -133,6 +158,7 @@ void stop_car()
   digitalWrite(INB2, LOW);
   analogWrite(PWM1, 0);
   analogWrite(PWM2, 0);  
+  Serial.println("stop");
 }
 
 void afterburner ()
@@ -153,6 +179,7 @@ void forward ()
   digitalWrite(INB2, HIGH);
   analogWrite(PWM1, drive_PWM);
   analogWrite(PWM2, drive_PWM);
+  Serial.println("forward");
 }
 
 void backward ()
@@ -163,6 +190,7 @@ void backward ()
   digitalWrite(INB2, LOW);
   analogWrite(PWM1, drive_PWM);
   analogWrite(PWM2, drive_PWM);
+  Serial.println("backward");
 }
 
 void turn_right ()
@@ -185,7 +213,7 @@ void turn_left ()
   analogWrite(PWM2, turn_PWM);
 }
 
-String GetMessage()
+/*String GetMessage()
 {
     int i;
     buf_string = "";
@@ -193,11 +221,14 @@ String GetMessage()
    
     for (i = 0; i < buflen; i++)
     {
+      Serial.println("markG1");  
       command_hesh += buf[i];
-      buf_string += char(buf[i]); 
+      buf_string += char(buf[i]);
+      Serial.println("markG2");
     }
+    Serial.println("markG3");
 }
-
+*/
 //*********************** Functions end ********************************
 
 
@@ -291,12 +322,19 @@ void setup()
         // turn on the DMP, now that it's ready
         Serial.println(F("Enabling DMP..."));
         mpu.setDMPEnabled(true);
-        
+
+ /*       // enable Arduino interrupt detection
+        Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
+        attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+        mpuIntStatus = mpu.getIntStatus();
+   */     
         // set our DMP Ready flag so the main loop() function knows it's okay to use it
         Serial.println(F("DMP ready! Waiting for first interrupt..."));
 
         // get expected DMP packet size for later comparison
         packetSize = mpu.dmpGetFIFOPacketSize();
+        Serial.print("PacketSize = ");
+        Serial.print(packetSize);
     } else {
         // ERROR!
         // 1 = initial memory load failed
@@ -313,29 +351,58 @@ void setup()
     t_old = millis();
     Vtimer = 40000;  
     //********** End setup velocity measurement*********    
+    
+    pinMode(LED, OUTPUT);
 }
 
 //*********************** Setup end **********************************
 
 
+//*********************************************************************
 //*********************** Loop begin **********************************
+//*********************************************************************
 
 void loop() 
 {
+    t_loop_start = millis();
+    digitalWrite(LED, LOW);
     buf[VW_MAX_MESSAGE_LEN];
     buflen = VW_MAX_MESSAGE_LEN;
-
     if (vw_get_message(buf, &buflen)) // Non-blocking
     {
         digitalWrite(12, true); // Flash a light to show received good message
         // Message with a good checksum received, dump it.
 
-        GetMessage();
+//        GetMessage();
+//*******************************
 
+    int i;
+    buf_string = "";
+    command_hesh = 0; 
+   
+    for (i = 0; i < buflen; i++)
+    {
+      command_hesh += buf[i];
+      buf_string += char(buf[i]);
+    }
+
+//*******************************
+
+        display.setCursor(0,0);
+        display.clearDisplay();
+        display.println(micros());
+    //    display.println(buf_string);
+        display.println(command_hesh);
+        display.println(drive_PWM);
+        display.println(turn_PWM);
+        display.display();
+        
         switch (command_hesh)
         {
           case (5):      // 5
             stop_car();
+            current_command = command_hesh;
+            start_measurement = false;
           break;
           
           case (9):          //  +
@@ -359,7 +426,8 @@ void loop()
           break;      
           
           default:
-            if ((command_hesh == current_comand)||(training_mode))
+            if ((command_hesh == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
+                                                                    // if it is training mode now - just do the new command
             {
                 switch (command_hesh)
                 {
@@ -371,7 +439,7 @@ void loop()
                   case (8):         // 8
                     forward();
                   break;
-
+                  
                   case (2):         // 2
                     backward();
                   break;
@@ -385,115 +453,139 @@ void loop()
                   break;      
                 }
             }
-            else
+            else //
             {
-                current_comand = command_hesh;      
-                stop_car();
-            //    delay(200);
-                t_start = millis();
+                switch (command_hesh)
+                {
+                  case (47):      // / - simbol
+                    afterburner(); 
+                    delay(20);
+                  break;
+
+                  case (8):         // 8
+                    forward();
+                  break;
+                  
+                  case (2):         // 2
+                    backward();
+                  break;
+
+                  case (4):         // 4 
+                    turn_left();
+                  break;
+
+                  case (6):       //  6
+                    turn_right();
+                  break;      
+                }
+                
+                t_command_execution_start = millis();
                 v_start = Vy_current;
                 start_measurement = true;
+                current_command = command_hesh;      
+            //   stop_car();
+            //    delay(200);
+
             }
         }    
 
-        display.setCursor(0,0);
-        display.clearDisplay();
-
-        display.println(micros());
-
-        display.println(buf_string);
-        display.println(command_hesh);
-        display.println(drive_PWM);
-        display.println(turn_PWM);
-            
-        display.display();
         digitalWrite(12, false);
         
-        Serial.println(buf_string);
-    }
+        Serial.println("*******************");
+    } 
   
     
     
     //*********************** Begin get acceleration and velocity loop **************
-    // get INT_STATUS byte
-    mpuIntStatus = mpu.getIntStatus();
+//    if ((mpuInterrupt) || (fifoCount >= packetSize))
+//    {
+        // reset interrupt flag and get INT_STATUS byte
+     //   mpuInterrupt = false;
+        mpuIntStatus = mpu.getIntStatus();
 
-    // get current FIFO count
-    fifoCount = mpu.getFIFOCount();
+        // get current FIFO count
+        fifoCount = mpu.getFIFOCount();
 
-    // check for overflow (this should never happen unless our code is too inefficient)
-    if ((mpuIntStatus & 0x10) || fifoCount == 1024) 
-    {
-        // reset so we can continue cleanly
-        mpu.resetFIFO();
-        Serial.println(F("FIFO overflow!"));
-
-    // otherwise, check for DMP data ready interrupt (this should happen frequently)
-    } 
-    else if (mpuIntStatus & 0x02) 
-    {
-        // wait for correct available data length, should be a VERY short wait
-        while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
-
-        // read a packet from FIFO
-        mpu.getFIFOBytes(fifoBuffer, packetSize);
-        
-        // track FIFO count here in case there is > 1 packet available
-        // (this lets us immediately read more without waiting for an interrupt)
-        fifoCount -= packetSize;    
-        
-
-        // get real acceleration, adjusted to remove gravity
-        mpu.dmpGetQuaternion(&q, fifoBuffer);
-        mpu.dmpGetAccel(&aa, fifoBuffer);
-        mpu.dmpGetGravity(&gravity, &q);
-        mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-    /*  Serial.print("areal\t");
-        Serial.print(aaReal.x);
-        Serial.print("\t");
-        Serial.println(aaReal.y);
-        Serial.print("\t");
-        Serial.println(aaReal.z);
-    */
-        t_current = millis();
-        Vy_current += (t_current-t_old)*(aaReal.y+accY_old)/2000;
-        t_old = t_current;
-        accY_old = aaReal.y;
-        if (t_old > Vtimer) 
+        // check for overflow (this should never happen unless our code is too inefficient)
+        if ((mpuIntStatus & 0x10) || fifoCount == 1024) 
         {
-            Vtimer = Vtimer+40000;
-            Vy_current =0;
+            // reset so we can continue cleanly
+            mpu.resetFIFO();
+            Serial.println(F("FIFO overflow!"));
+
+            
+        // otherwise, check for DMP data ready interrupt (this should happen frequently)
+        } 
+        else if (mpuIntStatus & 0x02) 
+        {
+            // wait for correct available data length, should be a VERY short wait
+            while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+
+            // read a packet from FIFO
+            mpu.getFIFOBytes(fifoBuffer, packetSize);
+            
+            // track FIFO count here in case there is > 1 packet available
+            // (this lets us immediately read more without waiting for an interrupt)
+          //  fifoCount -= packetSize; 
+        //    Serial.print("fif0Count = ");
+        //    Serial.println(fifoCount);
+            
+
+            // get real acceleration, adjusted to remove gravity
+            mpu.dmpGetQuaternion(&q, fifoBuffer);
+            mpu.dmpGetAccel(&aa, fifoBuffer);
+            mpu.dmpGetGravity(&gravity, &q);
+            mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+        /*  Serial.print("areal\t");
+            Serial.print(aaReal.x);
+            Serial.print("\t");
+            Serial.println(aaReal.y);
+            Serial.print("\t");
+            Serial.println(aaReal.z);
+        */
+            t_current = millis();
+            Vy_current += (t_current-t_old)*(aaReal.y+accY_old)/2000;
+            t_old = t_current;
+            accY_old = aaReal.y;
+            if ((t_old > Vtimer)&&(t_command_execution_start == 0))
+            {
+                Vtimer = Vtimer+40000;
+                Vy_current =0;
+            }
+         //     Serial.print(" Vy_current = ");
+         //     Serial.println(Vy_current);
         }
-        //  Serial.print(" Vy = ");
-        //  Serial.println(Vx_new);
-    }
+ //   }
     //*********************** End get acceleration and velocity loop **************   
     
     //*********************** Begin v_measurement loop ************
-    if ((start_measurement == true)&&((millis()-t_start) > t_measurement))
+    if ((start_measurement == true)&&((millis()-t_command_execution_start) > t_measurement))
     {
+        Serial.print("Time elapsed = ");
+        Serial.println(millis()-t_command_execution_start);
         // look v_current
         if (Vy_current-v_start > v_target)
         {
             Serial.println("Ok");
-        //    Serial.println(Vy_current);
+            Serial.print("Vdelta = ");
             Serial.println(Vy_current-v_start);
-            Serial.println(millis()-t_start);
-         //   delay(2000);
         }
         else
         {
             Serial.println("Not Ok");
-         //   Serial.println(Vy_current);
+            Serial.print("Vdelta = ");
             Serial.println(Vy_current-v_start);
-            Serial.println(millis()-t_start);
-          //  delay(2000);
         }        
         start_measurement = false;
+        t_command_execution_start = 0;
     }        
-    //**** End v_measurement loop
+    //********************* End v_measurement loop *************************
         
-        
+    digitalWrite(LED, HIGH);  
+    t_loop_finish = millis();
+  //  Serial.print("The loop is performed in = ");
+  //  Serial.println(t_loop_finish-t_loop_start);
+  //  Serial.println(millis());
 }  
 
 //*********************** Loop end **********************************
