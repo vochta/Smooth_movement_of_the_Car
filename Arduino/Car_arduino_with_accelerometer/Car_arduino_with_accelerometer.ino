@@ -65,6 +65,9 @@ byte turn_PWM = 70;
 // receiver pins:
 #define rx_pin 23  // data pin
 
+// v_measurement
+#define v_min 10
+#define v_max 20
 
 // ******** Begin MPU6050 ******************
 // Arduino --> MPU6050 pins:
@@ -101,10 +104,21 @@ bool training_mode = false;
 
 // **** Begin v_measurement vars ****
 
-  unsigned long t_current, t_old, Vtimer, t_command_execution_start = 0, t_measurement = 100;
-  float Vy_current =0, v_start, v_target = 10;
+  unsigned long t_current, t_old, Vtimer, t_command_execution_start = 0, t_measurement = 300;
+
+  float Vy_current =0, v_start, 
+        v_target_min = 8, 
+        v_target_max = 40,
+        v_delta = 0;
   float accY_old;
   bool start_measurement = false;
+  
+  unsigned long t_go_pause = 0; 
+  unsigned long go_pause_lenght = 1000; // pause with stop between commands after auto PWM change
+
+  byte PWM_drive_change_step = 1;  // step to auto change drive forward/backward PWM
+  float command_movement_direction = 0;
+  
 // **** End v_measurement vars ****
 
 // **** Begin acceleration vars ****
@@ -373,122 +387,128 @@ void loop()
         digitalWrite(12, true); // Flash a light to show received good message
         // Message with a good checksum received, dump it.
 
-//        GetMessage();
-//*******************************
+    //        GetMessage();
+    //*******************************
 
-    int i;
-    buf_string = "";
-    command_hesh = 0; 
-   
-    for (i = 0; i < buflen; i++)
-    {
-      command_hesh += buf[i];
-      buf_string += char(buf[i]);
-    }
+        int i;
+        buf_string = "";
+        command_hesh = 0; 
+       
+        for (i = 0; i < buflen; i++)
+        {
+          command_hesh += buf[i];
+          buf_string += char(buf[i]);
+        }
 
-//*******************************
+    //*******************************
 
         display.setCursor(0,0);
         display.clearDisplay();
-        display.println(micros());
+    //    display.println(micros());
     //    display.println(buf_string);
         display.println(command_hesh);
         display.println(drive_PWM);
         display.println(turn_PWM);
         display.display();
-        
+
         switch (command_hesh)
         {
-          case (5):      // 5
-            stop_car();
-            current_command = command_hesh;
-            start_measurement = false;
-          break;
-          
-          case (9):          //  +
-            drive_PWM = drive_PWM + 1;
-          break;  
+            case (5):      // 5
+                stop_car();
+                current_command = command_hesh;
+                start_measurement = false;
+                command_movement_direction = 0;
+            break;
 
-          case (7):           // -
-            drive_PWM = drive_PWM - 1;
-          break;     
+            case (9):          //  +
+                drive_PWM = drive_PWM + 1;
+            break;  
 
-          case (3):          // q
-            turn_PWM += 1;
-          break;  
-          
-          case (1):            // a
-            turn_PWM -= 1;
-          break;  
-          
-          case (0):            // t
-            training_mode = true;
-          break;      
-          
-          default:
-            if ((command_hesh == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
-                                                                    // if it is training mode now - just do the new command
-            {
-                switch (command_hesh)
-                {
-                  case (47):      // /
-                    afterburner();
-                    delay(20);
-                  break;
+            case (7):           // -
+                drive_PWM = drive_PWM - 1;
+            break;     
 
-                  case (8):         // 8
-                    forward();
-                  break;
-                  
-                  case (2):         // 2
-                    backward();
-                  break;
+            case (3):          // q
+                turn_PWM += 1;
+            break;  
 
-                  case (4):         // 4 
-                    turn_left();
-                  break;
+            case (1):            // a
+                turn_PWM -= 1;
+            break;  
 
-                  case (6):       //  6
-                    turn_right();
-                  break;      
+            case (0):            // t
+                training_mode = true;
+            break;      
+
+            default:
+                if (millis() > t_go_pause)  //can i go ?
+                {                     
+                    if ((command_hesh == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
+                                                                            // if it is training mode now - just do the new command
+                    {
+                        switch (command_hesh)
+                        {
+                            case (47):      // /
+                                afterburner();
+                                delay(20);
+                            break;
+
+                            case (8):         // 8
+                                forward();
+                            break;
+
+                            case (2):         // 2
+                                backward();
+                            break;
+
+                            case (4):         // 4 
+                                turn_left();
+                            break;
+
+                            case (6):       //  6
+                                turn_right();
+                            break;      
+                        }
+                    }
+                    else //
+                    {
+                        switch (command_hesh)
+                        {
+                            case (47):      // / -simbol
+                                afterburner(); 
+                                delay(20);
+                            break;
+
+                            case (8):         // 8
+                                forward();
+                                command_movement_direction = 1;
+                            break;
+
+                            case (2):         // 2
+                                backward();
+                                command_movement_direction = -1;
+                            break;
+
+                            case (4):         // 4 
+                                turn_left();
+                            break;
+
+                            case (6):       //  6
+                                turn_right();
+                            break;      
+                        }
+                    
+                        t_command_execution_start = millis();
+                        v_start = Vy_current;
+                        
+                        start_measurement = true;
+                        current_command = command_hesh;      
+                    //   stop_car();
+                    //    delay(200);
+                    }
                 }
-            }
-            else //
-            {
-                switch (command_hesh)
-                {
-                  case (47):      // / - simbol
-                    afterburner(); 
-                    delay(20);
-                  break;
-
-                  case (8):         // 8
-                    forward();
-                  break;
-                  
-                  case (2):         // 2
-                    backward();
-                  break;
-
-                  case (4):         // 4 
-                    turn_left();
-                  break;
-
-                  case (6):       //  6
-                    turn_right();
-                  break;      
-                }
-                
-                t_command_execution_start = millis();
-                v_start = Vy_current;
-                start_measurement = true;
-                current_command = command_hesh;      
-            //   stop_car();
-            //    delay(200);
-
-            }
-        }    
-
+        }   
+        
         digitalWrite(12, false);
         
         Serial.println("*******************");
@@ -502,7 +522,9 @@ void loop()
         // reset interrupt flag and get INT_STATUS byte
      //   mpuInterrupt = false;
         mpuIntStatus = mpu.getIntStatus();
+        
 
+        
         // get current FIFO count
         fifoCount = mpu.getFIFOCount();
 
@@ -561,24 +583,63 @@ void loop()
     //*********************** Begin v_measurement loop ************
     if ((start_measurement == true)&&((millis()-t_command_execution_start) > t_measurement))
     {
+        v_delta = (Vy_current-v_start);
         Serial.print("Time elapsed = ");
         Serial.println(millis()-t_command_execution_start);
-        // look v_current
-        if (Vy_current-v_start > v_target)
+        Serial.print("** = ");
+        Serial.println(command_movement_direction*v_delta);
+
+        if ((command_movement_direction*v_delta) <= 0)  // check the direction of Vy_current - is it the same with command_movement_direction? 
         {
-            Serial.println("Ok");
-            Serial.print("Vdelta = ");
-            Serial.println(Vy_current-v_start);
+            display.println("Wrong movement direction");
+            display.display(); 
+            Serial.println("Wrong movement direction");
         }
-        else
+
+        // look v_current
+
+        if (abs(v_delta) < v_target_min)
         {
-            Serial.println("Not Ok");
-            Serial.print("Vdelta = ");
-            Serial.println(Vy_current-v_start);
-        }        
+            stop_car();
+            t_go_pause = millis() + go_pause_lenght;
+            display.println("To slow");
+            display.print("Vdelta = ");
+            display.println(v_delta);                
+            display.display();
+            Serial.println("To slow");
+            drive_PWM += PWM_drive_change_step;
+        }
+        else if (abs(v_delta) > v_target_max)
+        {
+         //   stop();
+         //   t_go_pause = millise() + go_pause_lenght;
+            stop_car();
+            display.println("Too fast");
+            display.print("Vdelta = ");
+            display.println(v_delta);                
+            display.display();
+            Serial.println("Too fast");
+            drive_PWM -= PWM_drive_change_step;
+        }
+        
+        else 
+        {
+            display.println("Good");
+            display.print("Vdelta = ");
+            display.println(v_delta);                
+            display.display();          
+            Serial.println("Good");
+        }
+
         start_measurement = false;
         t_command_execution_start = 0;
-    }        
+        
+        Serial.print("Vdelta = ");
+        Serial.println(v_delta);
+        
+        Serial.print("drive_PWM = ");
+        Serial.println(drive_PWM);
+    }
     //********************* End v_measurement loop *************************
         
     digitalWrite(LED, HIGH);  
@@ -589,6 +650,3 @@ void loop()
 }  
 
 //*********************** Loop end **********************************
-
-
-
