@@ -91,13 +91,15 @@ byte turn_PWM = 70;
 
 //*************************** Variables begin *********************************
 
+int i; // simple counter
 
 Adafruit_SSD1306 display(OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
 
 uint8_t buf[VW_MAX_MESSAGE_LEN];
 uint8_t buflen = VW_MAX_MESSAGE_LEN;
-String buf_string;
-int command_hesh; 
+int command_message = 5; 
+bool new_message_available = false;
+
 int current_command;
 bool training_mode = false;
 
@@ -231,12 +233,12 @@ void turn_left ()
 {
     int i;
     buf_string = "";
-    command_hesh = 0; 
+    command_message = 0; 
    
     for (i = 0; i < buflen; i++)
     {
       Serial.println("markG1");  
-      command_hesh += buf[i];
+      command_message += buf[i];
       buf_string += char(buf[i]);
       Serial.println("markG2");
     }
@@ -380,6 +382,8 @@ void loop()
 {
     t_loop_start = millis();
     digitalWrite(LED, LOW);
+    
+//******************  Begin get message from PC (high-level)  *****************
     buf[VW_MAX_MESSAGE_LEN];
     buflen = VW_MAX_MESSAGE_LEN;
     if (vw_get_message(buf, &buflen)) // Non-blocking
@@ -387,35 +391,35 @@ void loop()
         digitalWrite(12, true); // Flash a light to show received good message
         // Message with a good checksum received, dump it.
 
-    //        GetMessage();
-    //*******************************
-
-        int i;
-        buf_string = "";
-        command_hesh = 0; 
-       
+        // get message
+        command_message = 0; 
         for (i = 0; i < buflen; i++)
         {
-          command_hesh += buf[i];
-          buf_string += char(buf[i]);
+          command_message += buf[i];
         }
+    
+        new_message_available = true;
+    }
+    else 
+    {
+        new_message_available = false;
+    }
+//******************  End get message from PC (high-level)  *****************
 
-    //*******************************
 
         display.setCursor(0,0);
         display.clearDisplay();
     //    display.println(micros());
-    //    display.println(buf_string);
-        display.println(command_hesh);
+        display.println(command_message);
         display.println(drive_PWM);
         display.println(turn_PWM);
         display.display();
 
-        switch (command_hesh)
+        switch (command_message)
         {
             case (5):      // 5
                 stop_car();
-                current_command = command_hesh;
+                current_command = command_message;
                 start_measurement = false;
                 command_movement_direction = 0;
             break;
@@ -443,10 +447,10 @@ void loop()
             default:
                 if (millis() > t_go_pause)  //can i go ?
                 {                     
-                    if ((command_hesh == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
+                    if ((command_message == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
                                                                             // if it is training mode now - just do the new command
                     {
-                        switch (command_hesh)
+                        switch (command_message)
                         {
                             case (47):      // /
                                 afterburner();
@@ -472,7 +476,7 @@ void loop()
                     }
                     else //
                     {
-                        switch (command_hesh)
+                        switch (command_message)
                         {
                             case (47):      // / -simbol
                                 afterburner(); 
@@ -500,11 +504,8 @@ void loop()
                     
                         t_command_execution_start = millis();
                         v_start = Vy_current;
-                        
                         start_measurement = true;
-                        current_command = command_hesh;      
-                    //   stop_car();
-                    //    delay(200);
+                        current_command = command_message;      
                     }
                 }
         }   
@@ -512,7 +513,7 @@ void loop()
         digitalWrite(12, false);
         
         Serial.println("*******************");
-    } 
+   // } 
   
     
     
@@ -611,9 +612,8 @@ void loop()
         }
         else if (abs(v_delta) > v_target_max)
         {
-         //   stop();
-         //   t_go_pause = millise() + go_pause_lenght;
-            stop_car();
+         //   t_go_pause = millis() + go_pause_lenght;
+         //   stop_car();
             display.println("Too fast");
             display.print("Vdelta = ");
             display.println(v_delta);                
