@@ -109,8 +109,8 @@ bool training_mode = false;
   unsigned long t_current, t_old, Vtimer, t_command_execution_start = 0, t_measurement = 300;
 
   float Vy_current =0, v_start, 
-        v_target_min = 8, 
-        v_target_max = 40,
+        v_target_min = 10, 
+        v_target_max = 30,
         v_delta = 0;
   float accY_old;
   bool start_measurement = false;
@@ -175,16 +175,6 @@ void stop_car()
   analogWrite(PWM1, 0);
   analogWrite(PWM2, 0);  
   Serial.println("stop");
-}
-
-void afterburner ()
-{
-  digitalWrite(INA1, HIGH);
-  digitalWrite(INB1, LOW);
-  digitalWrite(INA2, HIGH);
-  digitalWrite(INB2, LOW);
-  analogWrite(PWM1, (drive_PWM + 15));
-  analogWrite(PWM2, (drive_PWM + 15));
 }
 
 void forward ()
@@ -399,6 +389,7 @@ void loop()
         }
     
         new_message_available = true;
+        digitalWrite(12, false);
     }
     else 
     {
@@ -407,15 +398,19 @@ void loop()
 //******************  End get message from PC (high-level)  *****************
 
 
-        display.setCursor(0,0);
-        display.clearDisplay();
-    //    display.println(micros());
-        display.println(command_message);
-        display.println(drive_PWM);
-        display.println(turn_PWM);
-        display.display();
+    display.setCursor(0,0);
+    display.clearDisplay();
+    display.println(micros());
+/*    display.println(command_message);
+    display.println(drive_PWM);
+    display.println(turn_PWM);*/
+    display.display();
+    
+    delay(1000);
 
-        switch (command_message)
+    if (new_message_available == true)
+    {    
+        switch (command_message)  // what to do? (special commands)
         {
             case (5):      // 5
                 stop_car();
@@ -443,142 +438,99 @@ void loop()
             case (0):            // t
                 training_mode = true;
             break;      
-
+            
             default:
-                if (millis() > t_go_pause)  //can i go ?
-                {                     
-                    if ((command_message == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
-                                                                            // if it is training mode now - just do the new command
-                    {
-                        switch (command_message)
-                        {
-                            case (47):      // /
-                                afterburner();
-                                delay(20);
-                            break;
-
-                            case (8):         // 8
-                                forward();
-                            break;
-
-                            case (2):         // 2
-                                backward();
-                            break;
-
-                            case (4):         // 4 
-                                turn_left();
-                            break;
-
-                            case (6):       //  6
-                                turn_right();
-                            break;      
-                        }
-                    }
-                    else //
-                    {
-                        switch (command_message)
-                        {
-                            case (47):      // / -simbol
-                                afterburner(); 
-                                delay(20);
-                            break;
-
-                            case (8):         // 8
-                                forward();
-                                command_movement_direction = 1;
-                            break;
-
-                            case (2):         // 2
-                                backward();
-                                command_movement_direction = -1;
-                            break;
-
-                            case (4):         // 4 
-                                turn_left();
-                            break;
-
-                            case (6):       //  6
-                                turn_right();
-                            break;      
-                        }
-                    
-                        t_command_execution_start = millis();
-                        v_start = Vy_current;
-                        start_measurement = true;
-                        current_command = command_message;      
-                    }
+                if (command_message != current_command)
+                {
+                    t_command_execution_start = millis();
+                    v_start = Vy_current;
+                    start_measurement = true;
+                    current_command = command_message;      
                 }
-        }   
-        
-        digitalWrite(12, false);
-        
-        Serial.println("*******************");
-   // } 
-  
+        }    
+    }
     
-    
-    //*********************** Begin get acceleration and velocity loop **************
-//    if ((mpuInterrupt) || (fifoCount >= packetSize))
-//    {
-        // reset interrupt flag and get INT_STATUS byte
-     //   mpuInterrupt = false;
-        mpuIntStatus = mpu.getIntStatus();
-        
-
-        
-        // get current FIFO count
-        fifoCount = mpu.getFIFOCount();
-
-        // check for overflow (this should never happen unless our code is too inefficient)
-        if ((mpuIntStatus & 0x10) || fifoCount == 1024) 
+    if (millis() > t_go_pause)  //can i go ?
+    {                     
+        switch (command_message)   // what to do?
         {
-            // reset so we can continue cleanly
-            mpu.resetFIFO();
-            Serial.println(F("FIFO overflow!"));
+            case (8):         // 8
+                forward();
+                command_movement_direction = 1;
+            break;
 
-            
-        // otherwise, check for DMP data ready interrupt (this should happen frequently)
-        } 
-        else if (mpuIntStatus & 0x02) 
-        {
-            // wait for correct available data length, should be a VERY short wait
-            while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+            case (2):         // 2
+                backward();
+                command_movement_direction = -1;
+            break;
 
-            // read a packet from FIFO
-            mpu.getFIFOBytes(fifoBuffer, packetSize);
-            
-            // track FIFO count here in case there is > 1 packet available
-            // (this lets us immediately read more without waiting for an interrupt)
-          //  fifoCount -= packetSize; 
-        //    Serial.print("fif0Count = ");
-        //    Serial.println(fifoCount);
-            
+            case (4):         // 4 
+                turn_left();
+            break;
 
-            // get real acceleration, adjusted to remove gravity
-            mpu.dmpGetQuaternion(&q, fifoBuffer);
-            mpu.dmpGetAccel(&aa, fifoBuffer);
-            mpu.dmpGetGravity(&gravity, &q);
-            mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-        /*  Serial.print("areal\t");
-            Serial.print(aaReal.x);
-            Serial.print("\t");
-            Serial.println(aaReal.y);
-            Serial.print("\t");
-            Serial.println(aaReal.z);
-        */
-            t_current = millis();
-            Vy_current += (t_current-t_old)*(aaReal.y+accY_old)/2000;
-            t_old = t_current;
-            accY_old = aaReal.y;
-            if ((t_old > Vtimer)&&(t_command_execution_start == 0))
-            {
-                Vtimer = Vtimer+40000;
-                Vy_current =0;
-            }
-         //     Serial.print(" Vy_current = ");
-         //     Serial.println(Vy_current);
+            case (6):       //  6
+                turn_right();
+            break;      
         }
- //   }
+    }
+
+//*********************** Begin get acceleration and velocity loop **************
+
+    mpuIntStatus = mpu.getIntStatus();
+   
+    // get current FIFO count
+    fifoCount = mpu.getFIFOCount();
+
+    // check for overflow (this should never happen unless our code is too inefficient)
+    if ((mpuIntStatus & 0x10) || fifoCount == 1024) 
+    {
+        // reset so we can continue cleanly
+        mpu.resetFIFO();
+        Serial.println(F("FIFO overflow!"));
+
+        
+    // otherwise, check for DMP data ready interrupt (this should happen frequently)
+    } 
+    else if (mpuIntStatus & 0x02) 
+    {
+        // wait for correct available data length, should be a VERY short wait
+        while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
+
+        // read a packet from FIFO
+        mpu.getFIFOBytes(fifoBuffer, packetSize);
+        
+        // track FIFO count here in case there is > 1 packet available
+        // (this lets us immediately read more without waiting for an interrupt)
+      //  fifoCount -= packetSize; 
+    //    Serial.print("fif0Count = ");
+    //    Serial.println(fifoCount);
+        
+
+        // get real acceleration, adjusted to remove gravity
+        mpu.dmpGetQuaternion(&q, fifoBuffer);
+        mpu.dmpGetAccel(&aa, fifoBuffer);
+        mpu.dmpGetGravity(&gravity, &q);
+        mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
+    /*  Serial.print("areal\t");
+        Serial.print(aaReal.x);
+        Serial.print("\t");
+        Serial.println(aaReal.y);
+        Serial.print("\t");
+        Serial.println(aaReal.z);
+    */
+        t_current = millis();
+        Vy_current += (t_current-t_old)*(aaReal.y+accY_old)/2000;
+        t_old = t_current;
+        accY_old = aaReal.y;
+        if ((t_old > Vtimer)&&(t_command_execution_start == 0))
+        {
+            Vtimer = Vtimer+40000;
+            Vy_current =0;
+        }
+     //     Serial.print(" Vy_current = ");
+     //     Serial.println(Vy_current);
+    }
+
     //*********************** End get acceleration and velocity loop **************   
     
     //*********************** Begin v_measurement loop ************
@@ -606,7 +558,7 @@ void loop()
             display.println("To slow");
             display.print("Vdelta = ");
             display.println(v_delta);                
-            display.display();
+            display.display(); 
             Serial.println("To slow");
             drive_PWM += PWM_drive_change_step;
         }
