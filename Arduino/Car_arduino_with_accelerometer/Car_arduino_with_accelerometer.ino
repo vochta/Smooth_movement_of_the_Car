@@ -106,11 +106,11 @@ bool training_mode = false;
 
 // **** Begin v_measurement vars ****
 
-  unsigned long t_current, t_old, Vtimer, t_command_execution_start = 0, t_measurement = 300;
+  unsigned long t_current, t_old, Vtimer, t_command_execution_start = 0, t_measurement = 400;
 
   float Vy_current =0, v_start, 
-        v_target_min = 8, 
-        v_target_max = 40,
+        v_target_min = 10, 
+        v_target_max = 30,
         v_delta = 0;
   float accY_old;
   bool start_measurement = false;
@@ -397,6 +397,7 @@ void loop()
         }
     
         new_message_available = true;
+        digitalWrite(12, false);
     }
     else 
     {
@@ -413,7 +414,9 @@ void loop()
         display.println(turn_PWM);
         display.display();
 
-        switch (command_message)
+    if (new_message_available == true)
+    {    
+        switch (command_message)  // what to do? (special commands)
         {
             case (5):      // 5
                 stop_car();
@@ -443,77 +446,74 @@ void loop()
             break;      
 
             default:
-                if (millis() > t_go_pause)  //can i go ?
-                {                     
-                    if ((command_message == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
-                                                                            // if it is training mode now - just do the new command
-                    {
-                        switch (command_message)
-                        {
-                            case (47):      // /
-                                afterburner();
-                                delay(20);
-                            break;
-
-                            case (8):         // 8
-                                forward();
-                            break;
-
-                            case (2):         // 2
-                                backward();
-                            break;
-
-                            case (4):         // 4 
-                                turn_left();
-                            break;
-
-                            case (6):       //  6
-                                turn_right();
-                            break;      
-                        }
-                    }
-                    else //
-                    {
-                        switch (command_message)
-                        {
-                            case (47):      // / -simbol
-                                afterburner(); 
-                                delay(20);
-                            break;
-
-                            case (8):         // 8
-                                forward();
-                                command_movement_direction = 1;
-                            break;
-
-                            case (2):         // 2
-                                backward();
-                                command_movement_direction = -1;
-                            break;
-
-                            case (4):         // 4 
-                                turn_left();
-                            break;
-
-                            case (6):       //  6
-                                turn_right();
-                            break;      
-                        }
-                    
-                        t_command_execution_start = millis();
-                        v_start = Vy_current;
-                        start_measurement = true;
-                        current_command = command_message;      
-                    }
+                if (command_message != current_command)
+                {
+                    t_command_execution_start = millis();
+                    v_start = Vy_current;
+                    start_measurement = true;
+                    current_command = command_message;      
                 }
-        }   
-        
-        digitalWrite(12, false);
-        
-        Serial.println("*******************");
-   // } 
-  
+        }    
+    }            
     
+    if (millis() > t_go_pause)  //can i go ?
+    {                     
+        if ((command_hesh == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
+                                                                // if it is training mode now - just do the new command
+        {
+            switch (command_hesh)
+            {
+                case (8):         // 8
+                    forward();
+                break;
+
+                case (2):         // 2
+                    backward();
+                break;
+
+                case (4):         // 4 
+                    turn_left();
+                break;
+
+                case (6):       //  6
+                    turn_right();
+                break;      
+            }
+        }
+        else //
+        {
+            switch (command_hesh)
+            {
+                case (8):         // 8
+                    forward();
+                    command_movement_direction = 1;
+                break;
+
+                case (2):         // 2
+                    backward();
+                    command_movement_direction = -1;
+                break;
+
+                case (4):         // 4 
+                    turn_left();
+                break;
+
+                case (6):       //  6
+                    turn_right();
+                break;      
+            }
+        
+            t_command_execution_start = millis();
+            v_start = Vy_current;
+            
+            start_measurement = true;
+            current_command = command_hesh;      
+        //   stop_car();
+        //    delay(200);
+        }
+    }
+
+    //    Serial.println("*******************");
     
     //*********************** Begin get acceleration and velocity loop **************
 //    if ((mpuInterrupt) || (fifoCount >= packetSize))
