@@ -13,7 +13,7 @@
 
 //*************************** Settings begin *********************************
 
-byte drive_PWM = 36;
+byte drive_PWM = 60;
 byte turn_PWM = 70;
 
 //*************************** Settings end *********************************
@@ -63,7 +63,7 @@ uint8_t buflen = VW_MAX_MESSAGE_LEN;
 String buf_string;
 int command_hesh; 
 int current_comand;
-bool training_mode = false;
+bool training_mode = true;
 
 //*************************** Variables end *********************************
 
@@ -135,7 +135,7 @@ void turn_left ()
 }
 
 
-
+/*
 String GetMessage()
 {
     int i;
@@ -148,7 +148,7 @@ String GetMessage()
       buf_string += char(buf[i]); 
     }
 }
-
+*/
 
 //*********************** Functions end ********************************
 
@@ -227,7 +227,14 @@ void loop()
     digitalWrite(12, true); // Flash a light to show received good message
     // Message with a good checksum received, dump it.
 
-    GetMessage();
+    buf_string = "";
+    command_hesh = 0; 
+   
+    for (int i = 0; i < buflen; i++)
+    {
+      command_hesh += buf[i];
+      buf_string += char(buf[i]); 
+    }
 
     switch (command_hesh)
     {

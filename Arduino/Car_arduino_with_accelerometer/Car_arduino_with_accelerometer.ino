@@ -35,7 +35,7 @@ MPU6050 mpu;
 
 //*************************** Settings begin *********************************
 
-byte drive_PWM = 36;
+byte drive_PWM = 100;
 byte turn_PWM = 70;
 
 //*************************** Settings end *********************************
@@ -458,10 +458,10 @@ void loop()
     
     if (millis() > t_go_pause)  //can i go ?
     {                     
-        if ((command_hesh == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
+        if ((command_message == current_command)||(training_mode)) // if the new command is equal to current command, keep doing it 
                                                                 // if it is training mode now - just do the new command
         {
-            switch (command_hesh)
+            switch (command_message)
             {
                 case (8):         // 8
                     forward();
@@ -482,7 +482,7 @@ void loop()
         }
         else //
         {
-            switch (command_hesh)
+            switch (command_message)
             {
                 case (8):         // 8
                     forward();
@@ -507,7 +507,7 @@ void loop()
             v_start = Vy_current;
             
             start_measurement = true;
-            current_command = command_hesh;      
+            current_command = command_message;      
         //   stop_car();
         //    delay(200);
         }
