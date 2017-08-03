@@ -1136,15 +1136,15 @@ PWM_full  - наверное оно должно приравниваться к
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="381.1389964693254" width="867.4242727478958" x="-920.0325796490829" y="161.66771423483402"/>
+                  <y:Geometry height="381.1389964693254" width="882.4223196228958" x="-935.0306265240829" y="161.66771423483402"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="867.4242727478958" x="0.0" y="0.0">DB / memory / experience storage (general tables of correspondence)</y:NodeLabel>
+                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="882.4223196228958" x="0.0" y="0.0">DB / memory / experience storage (general tables of correspondence)</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:NodeBounds considerNodeLabelSize="true"/>
                   <y:Insets bottom="15" bottomF="15.0" left="15" leftF="15.0" right="15" rightF="15.0" top="15" topF="15.0"/>
-                  <y:BorderInsets bottom="19" bottomF="18.65616428429621" left="0" leftF="0.0" right="0" rightF="0.0" top="0" topF="0.0"/>
+                  <y:BorderInsets bottom="19" bottomF="18.65616428429621" left="15" leftF="14.998046875" right="0" rightF="0.0" top="0" topF="0.0"/>
                 </y:GroupNode>
                 <y:GroupNode>
                   <y:Geometry height="50.0" width="50.0" x="0.0" y="60.0"/>
@@ -1163,17 +1163,17 @@ PWM_full  - наверное оно должно приравниваться к
             <node id="n10::n3::n0">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="238.126953125" x="-905.0325796490829" y="390.79999408547934"/>
+                  <y:Geometry height="38.89651199999999" width="285.78275872585994" x="-905.0325796490829" y="390.79999408547934"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="228.126953125" x="5.0" y="10.097670062500015">Command_converting_to_sensors_values<y:LabelModel>
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="268.123046875" x="8.82985592542991" y="10.097670062500015">movementCommandConvertingToSensorsValues<y:LabelModel>
                       <y:SmartNodeLabelModel distance="4.0"/>
                     </y:LabelModel>
                     <y:ModelParameter>
                       <y:SmartNodeLabelModelParameter labelRatioX="0.0" labelRatioY="0.0" nodeRatioX="0.0" nodeRatioY="0.0" offsetX="0.0" offsetY="0.0" upX="0.0" upY="-1.0"/>
                     </y:ModelParameter>
                   </y:NodeLabel>
-                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="4.0" x="117.0634765625" y="17.448256000000015">
+                  <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" hasText="false" height="4.0" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="4.0" x="140.8913793629299" y="17.448256000000015">
                     <y:LabelModel>
                       <y:SmartNodeLabelModel distance="4.0"/>
                     </y:LabelModel>
@@ -1538,10 +1538,10 @@ current_general_emotional_system_state)<y:LabelModel>
               <data key="d4"/>
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="181.99078283136643" width="474.400390625" x="269.6767062277612" y="1064.494965003374"/>
+                  <y:Geometry height="199.89020381944803" width="500.7943752654762" x="265.7664862810241" y="977.5346334085554"/>
                   <y:Fill hasColor="false" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
-                  <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="151.01171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="464.400390625" x="5.0" y="15.489532040683116">Как будет проходить обновление значений на моторах:
+                  <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="195.115234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="490.85546875" x="4.96945325773811" y="2.3874847222240305">Как будет проходить обновление значений на моторах:
 по одному или сначала все что можно подготавливается
 и где-то сохраняется, а потом оптом быстро только меняется ШИМ
 и направление на драйвере?
@@ -1551,6 +1551,9 @@ current_general_emotional_system_state)<y:LabelModel>
 Но думаю даже если обновлять по одному, происходить это будет очень быстро, 
 заваливание машинки на одну сторону будет минимальным. Так что выбираю
 вариант "по одному".
+А уж по сравнению с разностью ходов моторов (погрешностью скоростей вращения 
+при одном и том же напряжении), влияние неодновременности изменения ШИМ будет
+вообще ничтожным.
 <y:LabelModel>
                       <y:SmartNodeLabelModel distance="4.0"/>
                     </y:LabelModel>
@@ -1876,7 +1879,7 @@ current_general_emotional_system_state = calm;<y:LabelModel>
     <edge id="e6" source="n10::n3::n0" target="n11">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="1.5916157281026244E-12" sy="-1.1368683772161603E-13" tx="0.0" ty="0.0"/>
+          <y:Path sx="1.9101421642508E-12" sy="-1.1368683772161603E-13" tx="0.0" ty="0.0"/>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
@@ -1935,7 +1938,7 @@ current_general_emotional_system_state = calm;<y:LabelModel>
     <edge id="e11" source="n10::n3::n0" target="n0::n2">
       <data key="d10">
         <y:PolyLineEdge>
-          <y:Path sx="-104.8289270990465" sy="-19.4482559999999" tx="-417.68359374999983" ty="-202.67794495714665">
+          <y:Path sx="-125.80810188635621" sy="-19.4482559999999" tx="-417.68359374999983" ty="-202.67794495714665">
             <y:Point x="39.42032999119391" y="141.79821753879565"/>
             <y:Point x="62.15786332047854" y="119.06068420951102"/>
           </y:Path>

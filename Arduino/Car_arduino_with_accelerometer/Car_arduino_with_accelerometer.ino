@@ -378,7 +378,7 @@ void setup()
 
 void loop() 
 {
-    t_loop_start = millis();
+    t_loop_start = millis();  // Просто счетчик затраченного времени на цикл.
     digitalWrite(LED, LOW);
     
 //******************  Begin get message from PC (high-level)  *****************
@@ -568,6 +568,7 @@ void loop()
             Vy_current += (t_current-t_old)*(aaReal.y+accY_old)/2000;
             t_old = t_current;
             accY_old = aaReal.y;
+			// Обнуление Vy_current при набравшемся значении и при условии, что вычисление скорости сейчас не ведется t_command_execution_start
             if ((t_old > Vtimer)&&(t_command_execution_start == 0))
             {
                 Vtimer = Vtimer+40000;
