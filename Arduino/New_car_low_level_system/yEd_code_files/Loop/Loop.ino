@@ -1,48 +1,51 @@
 #include <D:\Robot\GitHub\Smooth_movement_of_the_Car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.h>
 #include <D:\Robot\GitHub\Smooth_movement_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.cpp>
 
-#include <StandardCplusplus.h>   // It is needed to work with the container vector (and other c++ ) in the Arduino
 
-#include <vector>
+radioStation radio;
+carDisplay carDisp;
+Machine_room machine_room;
+Motion_model_of_the_car model;
+Monitoring_feedback_circuit monitoring;
 
-carMotionLowLevel car;
 
-
-std::vector <carMotionLowLevel::Motor> vector_of_motors;
-carMotionLowLevel::Motor motor_temp;
-byte time_to_change_1_PWM = 1/120;
-
-carMotionLowLevel::Velosity v; // переменная для работы со скоростью, ускорением
-
-void setup() 
+void setup()
 {
-    motor_temp.motor_id = 1;
-    motor_temp.motor_name = "Left front motor";
-	motor_temp.target_PWM =100;
+	Serial.begin(115200);
+	pinMode(13, OUTPUT);
 	
-	motor_temp.motor_driver_pinA_id = def_motor1_driver_pinA_id;
-	motor_temp.motor_driver_pinB_id = def_motor1_driver_pinB_id;
-	motor_temp.motor_driver_PWM_pin_id =  def_motor1_driver_PWM_pin_id;
-    vector_of_motors.push_back(motor_temp);
+	carDisp.displayInit();
+	carDisp.printlnMessage("Ready!");
 	
-    motor_temp.motor_id = 3;
-    motor_temp.motor_name = "Right back motor";   
-	motor_temp.target_PWM =200;	
-	motor_temp.motor_driver_pinA_id = def_motor2_driver_pinA_id;
-	motor_temp.motor_driver_pinB_id = def_motor2_driver_pinB_id;
-	motor_temp.motor_driver_PWM_pin_id = def_motor2_driver_PWM_pin_id;
-    vector_of_motors.push_back(motor_temp); 
-	
-	
-    Serial.begin(115200);
+	radio.radioInit();
+	machine_room.machine_roomInit();
+	monitoring.monitoringInit();
 }
+
+
 
 void loop()
 {
-    car.movementUpdate(&vector_of_motors, time_to_change_1_PWM);
-    v.getVelosityChange(v.getAccelerationsValues());
+	radio.recieveCommand ();
+	carDisp.printlnMessage(String(radio.tell_command_message()));
+	carDisp.printMessage(String(radio.tell_v_target_of_center()));
+	carDisp.printlnMessage(String(radio.tell_w_target()));
 	
-    delay(5000);
-	Serial.println(v.v_y);
-    Serial.println("Next");
+	carDisp.printMessage(String(machine_room.left_motor.tell_current_PWM()));
+	carDisp.printlnMessage(String(machine_room.right_motor.tell_current_PWM()));
+	carDisp.printMessage(String(model.tell_target_PWM_left()));			
+	carDisp.printMessage(String(model.tell_target_PWM_right()));		
+//	delay(500);
+	carDisp.displayClear();
+
+	model.calculate_new_target_PWMs(radio.tell_v_target_of_center(), radio.tell_w_target(), monitoring.tell_dv_dPWM_of_mpu());
+	
+	machine_room.left_motor.set_new_PWM_to_current_PWM(machine_room.calculate_new_PWM(machine_room.left_motor.tell_current_PWM(), machine_room.left_motor.tell_t_PWM_was_set(), model.tell_target_PWM_left()));
+	
+	machine_room.right_motor.set_new_PWM_to_current_PWM(machine_room.calculate_new_PWM(machine_room.right_motor.tell_current_PWM(), machine_room.right_motor.tell_t_PWM_was_set(), model.tell_target_PWM_right()));
+	
+	
+	monitoring.calculate_new_dv_dPWM_of_mpu(model.calculate_PWM_of_mpu(machine_room.right_motor.tell_current_PWM(), machine_room.left_motor.tell_current_PWM()));
+	
 }
+

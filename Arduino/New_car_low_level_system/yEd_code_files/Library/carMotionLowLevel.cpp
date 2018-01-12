@@ -1,180 +1,341 @@
 #include "Arduino.h"
-//#include <D:\Robot\GitHub\Smooth_movement_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.h>
 #include <StandardCplusplus.h>
 #include <vector>
 
-// Begin Machine_room (movement_command_execution)
-
-
-//...
-inline void carMotionLowLevel::movementUpdate_test1	(std::vector <carMotionLowLevel::Motor> vector_of_motors)
+void radioStation::radioInit()
 {
-    for (std::vector<carMotionLowLevel::Motor>::iterator it = vector_of_motors.begin() ; it != vector_of_motors.end(); ++it)
+	vw_setup(2000); // Bits per sec
+    vw_rx_start(); // Start the receiver PLL running
+    pinMode(rx_pin,INPUT);
+    vw_set_rx_pin(rx_pin);
+	pinMode(good_message_recieved_pin, OUTPUT);
+}
+
+char radioStation::recieveCommand()
+{
+	uint8_t buf[VW_MAX_MESSAGE_LEN];
+	uint8_t buflen = VW_MAX_MESSAGE_LEN;
+	digitalWrite(good_message_recieved_pin, false);
+    if (vw_get_message(buf, &buflen)) // Non-blocking
     {
-        Serial.println(it->motor_name);
-        Serial.println(it->motor_id);
+        digitalWrite(good_message_recieved_pin, true); // Flash a light to show received good message
+        // Message with a good checksum received, dump it.
+
+        // get message
+        command_message = ""; 
+        for (int i = 0; i < buflen; i++)
+        {
+          command_message += char(buf[i]);
+        }
+		decryptCommand();
+		return (1);
     }
-};
+	return (0);
+}
 
+String radioStation::tell_command_message()
+{
+	return command_message;
+}
 
-inline void carMotionLowLevel::PowerToMotor (byte motor_driver_pinA_id, byte motor_driver_pinB_id, byte motor_driver_PWM_pin_id, byte motor_driver_pinA_value, byte motor_driver_pinB_value, byte PWM_pin_value)
+int radioStation::tell_v_target_of_center()
+{
+	return v_target_of_center;
+}
+
+int radioStation::tell_w_target()
+{
+	return w_target_of_car;
+}
+
+void radioStation::decryptCommand()
+{
+	if (command_message =="8" )
+	{
+		v_target_of_center = 3;
+		w_target_of_car = 0;
+	}
+	else if (command_message =="2")
+	{
+		v_target_of_center = -3;
+		w_target_of_car = 0;		
+	}
+	else if (command_message =="6")
+	{
+		v_target_of_center = 0;
+		w_target_of_car = -10;		
+	}	
+	else if (command_message =="4")
+	{
+		v_target_of_center = 0;
+		w_target_of_car = 10;		
+	}	
+}
+
+void carDisplay::displayInit()
+{
+    car_display.begin(SSD1306_SWITCHCAPVCC);
+    // **** init done ****
+    
+    // Clear display the buffer.
+    car_display.setTextColor(WHITE);
+	displayClear();
+}
+
+void carDisplay::displayClear()
+{
+        car_display.setCursor(0,0);
+        car_display.clearDisplay();
+		car_display.display();
+}
+
+void carDisplay::printMessage(String message)
+{
+	    car_display.print(message);
+		car_display.print(" ");
+        car_display.display();
+}
+
+void carDisplay::printlnMessage(String message)
+{
+	    car_display.println(message);
+        car_display.display();
+}
+
+void Motor::motorInit(const byte pinA,
+			const byte pinB,
+			const byte PWM_pin, 
+			const byte maxPWM)
+{
+	motor_driver_pinA_id = pinA;
+	motor_driver_pinB_id = pinB;
+	motor_driver_PWM_pin_id = PWM_pin;
+	max_PWM = maxPWM;
+}
+
+void Motor::set_new_PWM_to_current_PWM(float new_PWM)
+{
+    if (abs(new_PWM) > max_PWM)
+    {
+		current_PWM = ((new_PWM > 0) - (new_PWM < 0))*max_PWM;
+    }
+	else current_PWM = new_PWM;
+	set_current_PWM_to_pins();
+	store_t_current_PWM_was_set();
+}
+
+float Motor::tell_current_PWM()
+{
+	return current_PWM;
+}
+
+void Motor::store_t_current_PWM_was_set()
+{
+	t_PWM_was_set = millis();
+}
+
+void Motor::set_current_PWM_to_pins()
+{
+	if (current_PWM >= 0)
+    {
+		powerToMotor(0,1,current_PWM);
+    }
+    else
+    {
+		powerToMotor(1,0, abs(current_PWM));
+    }
+}
+
+void Motor::powerToMotor(bool motor_driver_pinA_value, bool motor_driver_pinB_value, int PWM_pin_value)
 {
     digitalWrite(motor_driver_pinA_id, motor_driver_pinA_value);
     digitalWrite(motor_driver_pinB_id, motor_driver_pinB_value);
     analogWrite(motor_driver_PWM_pin_id, PWM_pin_value);
 }
 
-/*
-MovementCommandExecution(movement_command)
+unsigned long Motor::tell_t_PWM_was_set()
 {
-    getCurrentGeneralEmotionalSystemState();
-    Command_converting_to_sensors_values
-    Sensors_values_converting_to_motors_values
-    movementUpdate(motors);
+	return t_PWM_was_set;
 }
-*/
 
-
-//Функция изменяет значение PWM каждого из переданных ей моторов
-//в соответствии с переданным шагом ШИМ, прошедшим интервалом времени
-//с момента последнего изменения и заданным конечным ШИМ.
-void carMotionLowLevel::movementUpdate(std::vector <carMotionLowLevel::Motor> *vector_of_motors, byte time_to_change_1_PWM)
+void Machine_room::machine_roomInit()
 {
-    for (std::vector<carMotionLowLevel::Motor>::iterator motor = vector_of_motors->begin(); motor != vector_of_motors->end(); ++motor)
-    {
-        motor->current_PWM = newPwmCalculate (motor->current_PWM, motor->target_PWM, time_to_change_1_PWM, &motor->time_previous_PWM_change);
-        PwmUpdate(motor->motor_driver_pinA_id, motor->motor_driver_pinB_id, motor->motor_driver_PWM_pin_id, motor->current_PWM);
-    }
+	change_arduino_PWM_frequancy_to_4000();
+	left_motor.motorInit(def_motor_left_driver_pinA_id,
+			def_motor_left_driver_pinB_id,
+			def_motor_left_driver_PWM_pin_id,
+			def_max_PWM);
+			
+	right_motor.motorInit(def_motor_right_driver_pinA_id,
+			def_motor_right_driver_pinB_id,
+			def_motor_right_driver_PWM_pin_id,
+			def_max_PWM);
 }
 
 
-
-// Вычисление нового ШИМ одного мотора. Возвращает новый ШИМ.
-int carMotionLowLevel::newPwmCalculate (int current_PWM, int target_PWM, byte time_to_change_1_PWM, unsigned long *time_previous_PWM_change)
+void Machine_room::change_arduino_PWM_frequancy_to_4000()
 {
-    unsigned long dt = millis() - *time_previous_PWM_change;
-    int dPWM_drive = dt / time_to_change_1_PWM;
-    if (dPWM_drive > 1) *time_previous_PWM_change += dt;
-    if (current_PWM > target_PWM)
-    {
-        current_PWM -= dPWM_drive;
-    }
-    else
-    {
-        current_PWM += dPWM_drive;
-    }
+	    // change PWM from 500 Hz to 4000 Hz 
+    //(http://forum.arduino.cc/index.php?topic=72092.0)
+    int myEraser = 7;      // this is 111 in binary and is used as an eraser
+    TCCR3B &= ~myEraser;   // this operation (AND plus NOT),  set the three bits in TCCR2B to 0
+    TCCR4B &= ~myEraser;   // this operation (AND plus NOT),  set the three bits in TCCR2B to 0
 
-    if (abs(current_PWM)>max_PWM) current_PWM = target_PWM;
+    // now that CS02, CS01, CS00  are clear, we write on them a new value:
+    int myPrescaler = 2;         // this could be a number in [1 , 6]. In this case, 3 corresponds in binary to 011.   
+    TCCR3B |= myPrescaler;  // this operation (OR), replaces the last three bits in TCCR2B with our new value 011  
+    TCCR4B |= myPrescaler;  // this operation (OR), replaces the last three bits in TCCR2B with our new value 011  
+}
 
+float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, int target_PWM)
+{
+	unsigned long dt = millis() - t_PWM_was_set;
+    float dPWM = dt*float(abs(target_PWM))/time_for_commands_execution_from_stop_state;
+	if (dPWM < abs(target_PWM - current_PWM)) // если шаг dPWM_drive, который сейчас нужно будет сделать, больше, чем осталось до target_PWM, то его не делаем, а просто считаем что цель достигнута и ставим current_PWM = target_PWM.  Это чтобы ШИМ не болтало из стороны в сторону - то перепрыгнули в одну сторону, потом в другую.
+	{
+		if (current_PWM > target_PWM)
+		{
+			current_PWM -= dPWM;
+		}
+		else
+		{
+			current_PWM += dPWM;
+		}
+	}
+	else current_PWM = target_PWM;
     return current_PWM;
 }
 
-
-inline carMotionLowLevel::MotorDriverPins::Values carMotionLowLevel::translateNumberToPwmPins(int new_PWM)
+void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_dPWM )
 {
-    carMotionLowLevel::MotorDriverPins::Values values;
-    if (new_PWM >= 0)
-    {
-        values.motor_driver_pinA_value = 0;
-        values.motor_driver_pinB_value = 1;
-    }
-    else
-    {
-        values.motor_driver_pinA_value = 1;
-        values.motor_driver_pinB_value = 0;
-    }
-
-    values.PWM_pin_value = abs(new_PWM);
-    if (values.PWM_pin_value > max_PWM)
-    {
-        values.PWM_pin_value = max_PWM;
-    }
-    return values;
+	if ((w==0)&&(v != 0))
+	{
+		target_PWM_right = v / dv_dPWM;
+		target_PWM_left = target_PWM_right;
+	}		
+	else if ((v==0)&&(w!=0))
+	{
+		target_PWM_right = 3.14*d_beatween_wheels*w/360/2/dv_dPWM;
+		target_PWM_left = - target_PWM_right;
+	}
 }
 
-inline void carMotionLowLevel::PwmUpdate (byte motor_driver_pinA_id, byte motor_driver_pinB_id, byte motor_driver_PWM_pin_id, int new_PWM)
+void Motion_model_of_the_car::calculate_PWM_of_center(int PWM_left, int PWM_right)
 {
-    carMotionLowLevel::MotorDriverPins::Values values;
-    values = carMotionLowLevel::translateNumberToPwmPins(new_PWM);
-    PowerToMotor(motor_driver_pinA_id, motor_driver_pinB_id, motor_driver_PWM_pin_id, values.motor_driver_pinA_value, values.motor_driver_pinB_value, values.PWM_pin_value);
+	PWM_of_center = PWM_left + PWM_right;
 }
 
-
-
-
-
-// возвращает команду? а если сбой при получении? наверное внутри
-/*char MovementCommandReceive()
+int Motion_model_of_the_car::tell_PWM_of_center()
 {
-
+	return PWM_of_center;
 }
-*/
 
-// End Machine_room (movement_command_execution)
-
-
-
-// Begin Monitoring / feedback circuit
-
-
-
-
-// остановился здесь - задется не ускорение максимальное и минимлаьное, а скорость!!! посмотри в уже обкатанном файле.
-// Нет, похоже эту функцию нужно отменить, упразднить - нам думаю не интересен желаемый конечный ШИМ конкретной команды..
-// Или нет, в этой функции вообще речь не об изменении ШИМ или ускорения или скорости, это просто таблица. И функция вроде доделана..))
-// Смотри в тетрадке , проработай дальнейший алгоритм использования этих желаемых скоростей,  ШИМов и тд.  причем за любую единицу времени
-
-
-//Желаемые, соотвествующие желаемой команде, значениея датчиков у нас фиксированы в рамках данной программы. Это просто таблица соответствия, не меняется, не вычисляется
-carMotionLowLevel::SensorsValues carMotionLowLevel::movementCommandConvertingToSensorsValues(byte motors_plateform_type, byte movement_command)
+int Motion_model_of_the_car::calculate_PWM_of_mpu(int PWM_left, int PWM_right)
 {
-    carMotionLowLevel::SensorsValues::Mpu mpu_values;
+	PWM_of_mpu = PWM_left + PWM_right;
+	return PWM_of_mpu;
+}
 
-    switch (movement_command)
-    {
-        case (8):         // forward
-        //или  это значения датчика  от stop к forward? Но тогда как быть если была команда стоп до этого, но времени с ее поступления прошло мало и машинка не полностью остановилась, то есть по факту она не в состоянии стоп...
-        // И еще у меня же пружины - акселерометр будет колбасить постоянно. Может быть его нужно на нижнюю палубу крепить? С другой стороны н,ижнюю палубу ведь тоже колбасит - не даром же я амортизацию затеял)) То есть, возможно там все суммируется и вычитается,  и в итоге получается итоговое, правильное ускорение за взятый интервал времени.
-            mpu_values.dv_dPWM_min = def_dv_dPWM_min;
-            mpu_values.dv_dPWM_max = def_dv_dPWM_max;
-        break;
+int Motion_model_of_the_car::tell_PWM_of_mpu()
+{
+	return PWM_of_mpu;
+}
 
-        case (2):         // backward
-            mpu_values.dv_dPWM_min = -def_dv_dPWM_min;
-            mpu_values.dv_dPWM_max = -def_dv_dPWM_max;
-        break;
+int Motion_model_of_the_car::tell_target_PWM_left()
+{
+	return target_PWM_left;
+}
 
-        case (4):         // turn left
+int Motion_model_of_the_car::tell_target_PWM_right()
+{
+	return target_PWM_right;
+}
 
-        break;
+void Mpu_values::mpu_init()
+{
+	aaReal.y = 0;
+    // join I2C bus (I2Cdev library doesn't do this automatically)
+    #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
+        Wire.begin();
+        Wire.setClock(400000); // 400kHz I2C clock. Comment this line if having compilation difficulties
+    #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
+        Fastwire::setup(400, true);
+    #endif
 
-        case (6):       //  turn right
+    // initialize device MPU6050
+    Serial.println(F("Initializing I2C devices..."));
+    mpu.initialize();
 
-        break;
+    // verify connection
+    Serial.println(F("Testing device connections..."));
+    Serial.println(mpu.testConnection() ? F("MPU6050 connection successful") : F("MPU6050 connection failed"));
+
+    // load and configure the DMP
+    Serial.println(F("Initializing DMP..."));
+    devStatus = mpu.dmpInitialize();
+    
+    // set offsets of this particular MPU6050
+    mpu.setXGyroOffset(25);
+    mpu.setYGyroOffset(45);
+    mpu.setZGyroOffset(44);
+    mpu.setXAccelOffset(-5858);
+    mpu.setYAccelOffset(1349);
+    mpu.setZAccelOffset(1190);
+
+    // make sure it worked (returns 0 if so)
+    if (devStatus == 0) {
+        // turn on the DMP, now that it's ready
+        Serial.println(F("Enabling DMP..."));
+        mpu.setDMPEnabled(true);
+
+ /*       // enable Arduino interrupt detection
+        Serial.println(F("Enabling interrupt detection (Arduino external interrupt 0)..."));
+        attachInterrupt(digitalPinToInterrupt(INTERRUPT_PIN), dmpDataReady, RISING);
+        mpuIntStatus = mpu.getIntStatus();
+   */     
+        // set our DMP Ready flag so the main loop() function knows it's okay to use it
+        Serial.println(F("DMP ready! Waiting for first interrupt..."));
+
+        // get expected DMP packet size for later comparison
+        packetSize = mpu.dmpGetFIFOPacketSize();
+        Serial.print("PacketSize = ");
+        Serial.print(packetSize);
+    } else {
+        // ERROR!
+        // 1 = initial memory load failed
+        // 2 = DMP configuration updates failed
+        // (if it's going to break, usually the code will be 1)
+        Serial.print(F("DMP Initialization failed (code "));
+        Serial.print(devStatus);
+        Serial.println(F(")"));
     }
+    //********** End setup accelerometer *********	
 }
 
-
-
-
-// 
-VectorInt16 carMotionLowLevel::Velosity::getAccelerationsValues()
+float Mpu_values::tell_acc_y()
 {
-	// MPU control/status vars
-	uint8_t mpuIntStatus;   // holds actual interrupt status byte from MPU
-	uint16_t fifoCount;     // count of all bytes currently in FIFO
-	uint16_t packetSize;    // expected DMP packet size (default is 42 bytes)
-	uint8_t fifoBuffer[64]; // FIFO storage buffer
+	aaReal_previous = aaReal;
+	getAccelerationsValues();
+	return aaReal.y;
+}
 
-	// orientation/motion vars
-	Quaternion q;           // [w, x, y, z]         quaternion container
-	VectorInt16 aa;         // [x, y, z]            accel sensor measurements
-	VectorInt16 aaReal;     // [x, y, z]            gravity-free accel sensor measurements
-	VectorInt16 aaWorld;    // [x, y, z]            world-frame accel sensor measurements
-	VectorFloat gravity;    // [x, y, z]            gravity vector
+float Mpu_values::tell_acc_y_previous()
+{
+	return aaReal_previous.y;
+}
 
-	
-	
+float Mpu_values::tell_t_new_acc_was_gotten()
+{
+	return t_new_acc_was_gotten;
+}
+
+float Mpu_values::tell_t_previous_acc_was_gotten()
+{
+	return t_previous_acc_was_gotten;
+}
+
+void Mpu_values::getAccelerationsValues()
+{
 	mpuIntStatus = mpu.getIntStatus();
    
 	// get current FIFO count
@@ -186,7 +347,6 @@ VectorInt16 carMotionLowLevel::Velosity::getAccelerationsValues()
 		// reset so we can continue cleanly
 		mpu.resetFIFO();
 		Serial.println(F("FIFO overflow!"));
-
 		
 	// otherwise, check for DMP data ready interrupt (this should happen frequently)
 	} 
@@ -194,7 +354,8 @@ VectorInt16 carMotionLowLevel::Velosity::getAccelerationsValues()
 	{
 		// wait for correct available data length, should be a VERY short wait
 		while (fifoCount < packetSize) fifoCount = mpu.getFIFOCount();
-
+		t_previous_acc_was_gotten = t_new_acc_was_gotten;
+		t_new_acc_was_gotten = millis();
 		// read a packet from FIFO
 		mpu.getFIFOBytes(fifoBuffer, packetSize);
 		
@@ -203,117 +364,68 @@ VectorInt16 carMotionLowLevel::Velosity::getAccelerationsValues()
 		mpu.dmpGetAccel(&aa, fifoBuffer);
 		mpu.dmpGetGravity(&gravity, &q);
 		mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-	/*  Serial.print("areal\t");
+/*		Serial.print("areal\t");
 		Serial.print(aaReal.x);
 		Serial.print("\t");
-		Serial.println(aaReal.y);
+*/		Serial.println(aaReal.y);
 		Serial.print("\t");
-		Serial.println(aaReal.z);
-	*/
-	
-	
+/*		Serial.println(aaReal.z);
+*/
 	}       
-	return aaReal; // ????
+}
+
+void Instantaneous_velocity_calculator::velocity_calculatorInit()
+{
+	mpu_val.mpu_init();
+}
+
+float Instantaneous_velocity_calculator::tell_sum_velocity()
+{
+	return sum_velocity;
 }
 
 
-
-
-inline void carMotionLowLevel::Velosity::getVelosityChange(VectorInt16 aaReal)
+void Instantaneous_velocity_calculator::clear_sum_velocity()
 {
-	t_current = millis();
-	v_y += (t_current-t_old)*(aaReal.y+acc_y_old)/2000;
-	t_old = t_current;
-	acc_y_old = aaReal.y;
-}	
-/*	
-	// Обнуление Vy_current при набравшемся значении и при условии, что вычисление скорости сейчас не ведется t_command_execution_start
-//Куда это вынести?? ведь здесь оно не сработает никогда!!	
-	if ((t_old > Vtimer)&&(t_command_execution_start == 0))
+	sum_velocity = 0;
+}
+
+void Instantaneous_velocity_calculator::calculate_inst_velocity()
+{
+	inst_velocity = (mpu_val.tell_t_new_acc_was_gotten()-mpu_val.tell_t_previous_acc_was_gotten())*(mpu_val.tell_acc_y()+mpu_val.tell_acc_y_previous())/2000;
+}
+
+void Instantaneous_velocity_calculator::sum_inst_velocity()
+{
+	sum_velocity += inst_velocity;
+}
+
+void Monitoring_feedback_circuit::monitoringInit()
+{
+	v_calculator.velocity_calculatorInit();
+}
+
+void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(int PWM_of_mpu)
+{
+	v_calculator.calculate_inst_velocity();
+	v_calculator.sum_inst_velocity();
+	Serial.print("sum vel: ");
+	Serial.println(v_calculator.tell_sum_velocity());
+	
+	if ((millis() - t_mes_start) > duration_t_mes_inst_velocity)
 	{
-		Vtimer = Vtimer+40000;
-		Vy_current =0;
+		Serial.print("dv_dPWM_of_mpu: ");
+		Serial.println(dv_dPWM_of_mpu);
+		Serial.print("PWM_of_mpu: ");
+		Serial.println(PWM_of_mpu);
+		dv_dPWM_of_mpu = v_calculator.tell_sum_velocity()/(PWM_of_mpu - PWM_mpu_start + 0.5);
+		v_calculator.clear_sum_velocity();
+		PWM_mpu_start = PWM_of_mpu;		
+		t_mes_start = millis();
 	}
 }
 
-*/
-
-
-// здесь...))
-void carMotionLowLevel::Velosity::v_measurement(float command_movement_direction,float v_target_min, float v_target_max)
+float Monitoring_feedback_circuit::tell_dv_dPWM_of_mpu()
 {
-    if ((millis()-t_command_execution_start) > t_measurement)
-    {
-        v_delta_y = (v_y-v_start_y);
-        Serial.print("Time elapsed = ");
-        Serial.println(millis()-t_command_execution_start);
-        Serial.print("** = ");
-        Serial.println(command_movement_direction*v_delta_y);
-
-        if ((command_movement_direction*v_delta_y) <= 0)  // check the direction of Vy_current - is it the same with command_movement_direction? 
-        {
- /*           display.println("Wrong movement direction");
-            display.display(); 
-  */          Serial.println("Wrong movement direction");
-        }
-
-        // look v_current
-
-        if (abs(v_delta_y) < v_target_min)
-        {
-          //  stop_car();
-          //  t_go_pause = millis() + go_pause_lenght;
- /*           display.println("To slow");
-            display.print("Vdelta = ");
-            display.println(v_delta_y);                
-            display.display();
-  */          Serial.println("To slow");
-         //   drive_PWM += PWM_drive_change_step;
-        }
-        else if (abs(v_delta_y) > v_target_max)
-        {
-         //   t_go_pause = millis() + go_pause_lenght;
-         //   stop_car();
- /*           display.println("Too fast");
-            display.print("Vdelta = ");
-            display.println(v_delta_y_y);                
-            display.display();
-  */          Serial.println("Too fast");
-         //   drive_PWM -= PWM_drive_change_step;
-        }
-        
-        else 
-        {
- /*           display.println("Good");
-            display.print("Vdelta = ");
-            display.println(v_delta_y);                
-            display.display();          
-  */          Serial.println("Good");
-        }
-
-     //   start_measurement = false;
-        t_command_execution_start = 0;
-        
-        Serial.print("Vdelta = ");
-        Serial.println(v_delta_y);
-        
-        Serial.print("drive_PWM = ");
-       // Serial.println(drive_PWM);
-    }
+	return dv_dPWM_of_mpu;
 }
-
-
-
-// End Monitoring / feedback circuit
-
-
-// Begin Current state of all system (organism)
-
-byte carMotionLowLevel::getCurrentGeneralEmotionalSystemState()
-{
-    return 1;  // пока просто заглушка
-}
-
-// End Current state of all system (organism)
-
-

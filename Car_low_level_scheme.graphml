@@ -583,10 +583,10 @@ start_measurement_acceleration = true;<y:LabelModel>
         <y:ProxyAutoBoundsNode>
           <y:Realizers active="0">
             <y:GroupNode>
-              <y:Geometry height="2050.652752031302" width="2128.155553879112" x="-981.0628863955918" y="-246.49267917391614"/>
+              <y:Geometry height="2050.6527520313016" width="2128.1555538791126" x="93.6059718520819" y="545.2057523146835"/>
               <y:Fill color="#F5F5F5" transparent="false"/>
               <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="2128.155553879112" x="0.0" y="0.0">Block-scheme</y:NodeLabel>
+              <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="2128.1555538791126" x="0.0" y="0.0">Block-scheme</y:NodeLabel>
               <y:Shape type="roundrectangle"/>
               <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
               <y:NodeBounds considerNodeLabelSize="true"/>
@@ -611,7 +611,7 @@ start_measurement_acceleration = true;<y:LabelModel>
           <data key="d4"><![CDATA[D:\Robot\GitHub\Smooth_motion_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Loop\Loop.ino]]></data>
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="38.89651199999999" width="103.40234375" x="127.49764279170529" y="-20.99567922810357"/>
+              <y:Geometry height="38.89651199999999" width="103.40234375" x="1202.166501039379" y="770.7027522604961"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="93.40234375" x="5.0" y="10.097670062499994">New_loop_begin<y:LabelModel>
@@ -639,10 +639,10 @@ start_measurement_acceleration = true;<y:LabelModel>
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="417.21929334685296" width="323.449164918933" x="-9.910761866786743" y="35.73468834554549"/>
+                  <y:Geometry height="417.2192933468532" width="323.44916491893287" x="1064.7580963808869" y="827.4331198341451"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="323.449164918933" x="0.0" y="0.0">Radio station</y:NodeLabel>
+                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="323.44916491893287" x="0.0" y="0.0">Radio station</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:NodeBounds considerNodeLabelSize="true"/>
@@ -666,7 +666,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n1::n0">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="174.740234375" x="63.81189347482757" y="157.0076651892955"/>
+                  <y:Geometry height="38.89651199999999" width="174.740234375" x="1138.4807517225013" y="948.7060966778952"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="164.740234375" x="5.0" y="10.097670062499986">Movement_command_receive<y:LabelModel>
@@ -691,7 +691,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n1::n1">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="114.7109375" x="93.82654191232757" y="73.11115318929549"/>
+                  <y:Geometry height="38.89651199999999" width="114.7109375" x="1168.4954001600013" y="864.8095846778951"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="104.7109375" x="5.0" y="10.097670062499986">Command_receive<y:LabelModel>
@@ -719,10 +719,10 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <y:ProxyAutoBoundsNode>
                   <y:Realizers active="0">
                     <y:GroupNode>
-                      <y:Geometry height="139.33321469038515" width="293.449164918933" x="5.089238133213257" y="243.8166096890776"/>
+                      <y:Geometry height="139.33321469038515" width="293.4491649189329" x="1079.7580963808869" y="1035.5150411776774"/>
                       <y:Fill color="#F5F5F5" transparent="false"/>
                       <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                      <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="293.449164918933" x="0.0" y="0.0">Movement commands</y:NodeLabel>
+                      <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="293.4491649189329" x="0.0" y="0.0">Movement commands</y:NodeLabel>
                       <y:Shape type="roundrectangle"/>
                       <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                       <y:NodeBounds considerNodeLabelSize="true"/>
@@ -746,7 +746,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <node id="n10::n1::n2::n0">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="30.0" width="38.685546875" x="35.21888840603344" y="281.1930745328276"/>
+                      <y:Geometry height="30.0" width="38.685546875" x="1109.8877466537072" y="1072.8915060214274"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="28.685546875" x="5.0" y="5.6494140625">Stop<y:LabelModel>
@@ -763,7 +763,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <node id="n10::n1::n2::n1">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="30.0" width="54.013671875" x="199.26236558857312" y="281.1930745328276"/>
+                      <y:Geometry height="30.0" width="54.013671875" x="1273.9312238362468" y="1072.8915060214274"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="44.013671875" x="5.0" y="5.6494140625">forward<y:LabelModel>
@@ -788,7 +788,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <node id="n10::n1::n2::n2">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="30.0" width="65.357421875" x="103.90477630285883" y="281.1930745328276"/>
+                      <y:Geometry height="30.0" width="65.357421875" x="1178.5736345505325" y="1072.8915060214274"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="55.357421875" x="5.0" y="5.6494140625">backward<y:LabelModel>
@@ -815,7 +815,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n1::n3">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="175.40234375" x="68.89492727470747" y="399.0574696923985"/>
+                  <y:Geometry height="38.89651199999999" width="175.40234375" x="1143.5637855223813" y="1190.7559011809983"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="165.40234375" x="5.0" y="10.097670062500015">MovementCommandReceived<y:LabelModel>
@@ -845,7 +845,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="526.0074174406471" width="818.1605170815678" x="-966.0628863955918" y="670.52808589997"/>
+                  <y:Geometry height="526.0074174406473" width="818.1605170815678" x="108.6059718520819" y="1462.2265173885698"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
                   <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="818.1605170815678" x="0.0" y="0.0">Monitoring / feedback circuit</y:NodeLabel>
@@ -872,7 +872,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n2::n0">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="250.126953125" x="-541.925828515413" y="707.90455074372"/>
+                  <y:Geometry height="38.89651199999999" width="250.126953125" x="532.7430297322608" y="1499.6029822323198"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="240.126953125" x="5.0" y="10.097670062500015">Movement_command_execution_monitoring<y:LabelModel>
@@ -897,7 +897,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n2::n1">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="130.7421875" x="-293.64455681402404" y="819.3171178962498"/>
+                  <y:Geometry height="38.89651199999999" width="130.7421875" x="781.0243014336497" y="1611.0155493848495"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="120.7421875" x="5.0" y="10.097670062500015">Get_encoders_values<y:LabelModel>
@@ -922,7 +922,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n2::n2">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="152.08203125" x="-475.7267802763256" y="819.3171178962498"/>
+                  <y:Geometry height="38.89651199999999" width="152.08203125" x="598.9420779713481" y="1611.0155493848495"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="142.08203125" x="5.0" y="10.097670062500015">Get_accelerations_values<y:LabelModel>
@@ -947,7 +947,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n2::n3">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="209.43359375" x="-715.1604980342621" y="819.3171178962498"/>
+                  <y:Geometry height="38.89651199999999" width="209.43359375" x="359.5083602134116" y="1611.0155493848495"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="199.43359375" x="5.0" y="10.097670062500015">Get_motors_current_ampere_values<y:LabelModel>
@@ -972,7 +972,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n2::n4">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="166.75390625" x="-951.0628863955918" y="819.3171178962499"/>
+                  <y:Geometry height="38.89651199999999" width="166.75390625" x="123.6059718520819" y="1611.0155493848497"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="156.75390625" x="5.0" y="10.097670062500015">Caltulate_perceived_velocity<y:LabelModel>
@@ -997,7 +997,7 @@ start_measurement_acceleration = true;<y:LabelModel>
             <node id="n10::n2::n5">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="98.708984375" x="-917.0404254580918" y="903.2136298962499"/>
+                  <y:Geometry height="38.89651199999999" width="98.708984375" x="157.6284327895819" y="1694.9120613848497"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="88.708984375" x="5.0" y="10.097670062500015">Volocity_control<y:LabelModel>
@@ -1025,7 +1025,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <y:ProxyAutoBoundsNode>
                   <y:Realizers active="0">
                     <y:GroupNode>
-                      <y:Geometry height="209.89814586691966" width="633.714446279413" x="-931.1666793289077" y="971.6373574736975"/>
+                      <y:Geometry height="209.89814586691978" width="633.714446279413" x="143.50217891876605" y="1763.3357889622973"/>
                       <y:Fill color="#F5F5F5" transparent="false"/>
                       <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
                       <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="633.714446279413" x="0.0" y="0.0">Correction_center</y:NodeLabel>
@@ -1052,7 +1052,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <node id="n10::n2::n6::n0">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="38.89651199999999" width="102.705078125" x="-890.3205422912507" y="1113.4690340803504"/>
+                      <y:Geometry height="38.89651199999999" width="102.705078125" x="184.348315956423" y="1905.1674655689503"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="92.705078125" x="5.0" y="10.097670062499901">Make_correction<y:LabelModel>
@@ -1077,7 +1077,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <node id="n10::n2::n6::n1">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="38.89651199999999" width="123.388671875" x="-900.6751555328153" y="1028.0835005289018"/>
+                      <y:Geometry height="38.89651199999999" width="123.388671875" x="173.9937027148584" y="1819.7819320175017"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="113.388671875" x="5.0" y="10.097670062499901">Calculate_correction<y:LabelModel>
@@ -1102,7 +1102,7 @@ start_measurement_acceleration = true;<y:LabelModel>
                 <node id="n10::n2::n6::n2">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="64.38408157572958" width="417.072265625" x="-736.5555523505581" y="1013.6173241299476"/>
+                      <y:Geometry height="64.38408157572958" width="417.072265625" x="338.11330589711565" y="1805.3157556185474"/>
                       <y:Fill hasColor="false" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="407.072265625" x="5.0" y="8.140282975364812">Здесь наверное должно меняться:
@@ -1136,7 +1136,7 @@ PWM_full  - наверное оно должно приравниваться к
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="381.1389964693254" width="882.4223196228958" x="-935.0306265240829" y="161.66771423483402"/>
+                  <y:Geometry height="381.1389964693253" width="882.4223196228958" x="139.63823172359082" y="953.3661457234339"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
                   <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="882.4223196228958" x="0.0" y="0.0">DB / memory / experience storage (general tables of correspondence)</y:NodeLabel>
@@ -1163,7 +1163,7 @@ PWM_full  - наверное оно должно приравниваться к
             <node id="n10::n3::n0">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="285.78275872585994" x="-905.0325796490829" y="390.79999408547934"/>
+                  <y:Geometry height="38.89651199999999" width="285.78275872585994" x="169.63627859859082" y="1182.4984255740792"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="268.123046875" x="8.82985592542991" y="10.097670062500015">movementCommandConvertingToSensorsValues<y:LabelModel>
@@ -1188,7 +1188,7 @@ PWM_full  - наверное оно должно приравниваться к
             <node id="n10::n3::n1">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="262.8125" x="-693.8740777898747" y="470.2540344198632"/>
+                  <y:Geometry height="38.89651199999999" width="262.8125" x="380.794780457799" y="1261.952465908463"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="252.8125" x="5.0" y="10.097670062500015">Sensors_values_converting_to_motors_values<y:LabelModel>
@@ -1213,7 +1213,7 @@ PWM_full  - наверное оно должно приравниваться к
             <node id="n10::n3::n2">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="206.6898644597601" width="461.890625" x="-529.4989319011871" y="199.04417907858402"/>
+                  <y:Geometry height="206.6898644597601" width="461.890625" x="545.1699263464866" y="990.7426105671839"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="195.115234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="451.890625" x="5.0" y="5.787315042380044">Emotional_state 
@@ -1255,7 +1255,7 @@ precision -???<y:LabelModel>
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="91.27297684374999" width="310.666015625" x="-693.9375588557613" y="24.638369527565317"/>
+                  <y:Geometry height="91.27297684375003" width="310.666015625" x="380.73129939191244" y="816.3368010161649"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
                   <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="310.666015625" x="0.0" y="0.0">Current state of all system (organism)</y:NodeLabel>
@@ -1282,7 +1282,7 @@ precision -???<y:LabelModel>
             <node id="n10::n4::n0">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="174.734375" x="-678.9375588557613" y="62.01483437131532"/>
+                  <y:Geometry height="38.89651199999999" width="174.734375" x="395.73129939191244" y="853.7132658599149"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="164.734375" x="5.0" y="2.7470841249999864">Emotional state
@@ -1313,10 +1313,10 @@ calm (default) / exited / careful<y:LabelModel>
             <y:ProxyAutoBoundsNode>
               <y:Realizers active="0">
                 <y:GroupNode>
-                  <y:Geometry height="1163.1408044280836" width="1169.8492268402342" x="-37.75655935671372" y="626.0192684293022"/>
+                  <y:Geometry height="1163.1408044280834" width="1169.8492268402345" x="1036.91229889096" y="1417.7176999179019"/>
                   <y:Fill color="#F5F5F5" transparent="false"/>
                   <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="1169.8492268402342" x="0.0" y="0.0">Machine_room (movement_command_execution)</y:NodeLabel>
+                  <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="1169.8492268402345" x="0.0" y="0.0">Machine_room (movement_command_execution)</y:NodeLabel>
                   <y:Shape type="roundrectangle"/>
                   <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                   <y:NodeBounds considerNodeLabelSize="true"/>
@@ -1340,7 +1340,7 @@ calm (default) / exited / careful<y:LabelModel>
             <node id="n10::n5::n0">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="38.89651199999999" width="304.12109375" x="55.809600132779764" y="691.8191803012952"/>
+                  <y:Geometry height="38.89651199999999" width="304.12109375" x="1130.4784583804535" y="1483.517611789895"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="294.12109375" x="5.0" y="2.747084125000015">MovementCommandExecution(movement_command, 
@@ -1369,10 +1369,10 @@ current_general_emotional_system_state)<y:LabelModel>
                 <y:ProxyAutoBoundsNode>
                   <y:Realizers active="0">
                     <y:GroupNode>
-                      <y:Geometry height="448.83372776193175" width="1139.8492268402342" x="-22.756559356713723" y="747.122591992989"/>
+                      <y:Geometry height="448.8337277619315" width="1139.8492268402345" x="1051.91229889096" y="1538.8210234815888"/>
                       <y:Fill color="#F5F5F5" transparent="false"/>
                       <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
-                      <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="1139.8492268402342" x="0.0" y="0.0">Calculate PWM</y:NodeLabel>
+                      <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="1139.8492268402345" x="0.0" y="0.0">Calculate PWM</y:NodeLabel>
                       <y:Shape type="roundrectangle"/>
                       <y:State closed="false" closedHeight="50.0" closedWidth="50.0" innerGraphDisplayEnabled="false"/>
                       <y:NodeBounds considerNodeLabelSize="true"/>
@@ -1396,7 +1396,7 @@ current_general_emotional_system_state)<y:LabelModel>
                 <node id="n10::n5::n1::n0">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="49.917903606048014" width="526.197265625" x="541.5418862335207" y="857.8211782972528"/>
+                      <y:Geometry height="49.917903606048014" width="526.197265625" x="1616.2107444811945" y="1649.5196097858527"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="516.197265625" x="5.0" y="8.257779928023979">int new_PWM_calculate (current_PWM, target_PWM, time_to_change_1_PWM, time_previous);
@@ -1423,7 +1423,7 @@ current_general_emotional_system_state)<y:LabelModel>
                   <data key="d4"><![CDATA[D:\Robot\GitHub\Smooth_motion_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.cpp]]></data>
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="86.16678848423835" width="452.779296875" x="-6.62128914830771" y="861.3678449243171"/>
+                      <y:Geometry height="86.16678848423835" width="452.779296875" x="1068.047569099366" y="1653.0662764129167"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="62.8046875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="442.779296875" x="5.0" y="11.681050492119198">Movement_update(vector motors, );
@@ -1456,7 +1456,7 @@ current_general_emotional_system_state)<y:LabelModel>
                 <y:ProxyAutoBoundsNode>
                   <y:Realizers active="0">
                     <y:GroupNode>
-                      <y:Geometry height="194.23227284375002" width="399.51171875" x="64.15183752345479" y="1231.955765206363"/>
+                      <y:Geometry height="194.23227284375025" width="399.51171875" x="1138.8206957711286" y="2023.6541966949621"/>
                       <y:Fill color="#F5F5F5" transparent="false"/>
                       <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
                       <y:NodeLabel alignment="right" autoSizePolicy="node_width" backgroundColor="#EBEBEB" borderDistance="0.0" fontFamily="Dialog" fontSize="15" fontStyle="plain" hasLineColor="false" height="22.37646484375" horizontalTextPosition="center" iconTextGap="4" modelName="internal" modelPosition="t" textColor="#000000" verticalTextPosition="bottom" visible="true" width="399.51171875" x="0.0" y="0.0">Set PWM in motors driver</y:NodeLabel>
@@ -1483,7 +1483,7 @@ current_general_emotional_system_state)<y:LabelModel>
                 <node id="n10::n5::n2::n0">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="40.747904000000005" width="193.384765625" x="167.2153140859548" y="1269.332230050113"/>
+                      <y:Geometry height="40.747904000000005" width="193.384765625" x="1241.8841723336286" y="2061.030661538712"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="183.384765625" x="5.0" y="11.023366062499917">PWM_update (motor, new_PWM)<y:LabelModel>
@@ -1500,7 +1500,7 @@ current_general_emotional_system_state)<y:LabelModel>
                 <node id="n10::n5::n2::n1">
                   <data key="d6">
                     <y:ShapeNode>
-                      <y:Geometry height="56.10790400000002" width="369.51171875" x="79.15183752345479" y="1355.080134050113"/>
+                      <y:Geometry height="56.10790400000002" width="369.51171875" x="1153.8206957711286" y="2146.7785655387124"/>
                       <y:Fill color="#FFCC00" transparent="false"/>
                       <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                       <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="33.40234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="359.51171875" x="5.0" y="11.352780124999981">PowerToMotor
@@ -1520,7 +1520,7 @@ current_general_emotional_system_state)<y:LabelModel>
             <node id="n10::n5::n3">
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="76.07999999999993" width="283.8363750000001" x="445.1114635496233" y="663.3957332730522"/>
+                  <y:Geometry height="76.07999999999993" width="283.8363750000001" x="1519.780321797297" y="1455.0941647616519"/>
                   <y:Fill color="#FFCC00" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="237.484375" x="23.176000000000045" y="28.689414062499964">movement_command_to_execute_changed<y:LabelModel>
@@ -1538,7 +1538,7 @@ current_general_emotional_system_state)<y:LabelModel>
               <data key="d4"/>
               <data key="d6">
                 <y:ShapeNode>
-                  <y:Geometry height="199.89020381944803" width="500.7943752654762" x="265.7664862810241" y="977.5346334085554"/>
+                  <y:Geometry height="199.89020381944803" width="500.7943752654762" x="1340.435344528698" y="1769.2330648971551"/>
                   <y:Fill hasColor="false" transparent="false"/>
                   <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
                   <y:NodeLabel alignment="left" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="195.115234375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="490.85546875" x="4.96945325773811" y="2.3874847222240305">Как будет проходить обновление значений на моторах:
@@ -1571,7 +1571,7 @@ current_general_emotional_system_state)<y:LabelModel>
           <data key="d4"><![CDATA[D:\Robot\GitHub\Smooth_motion_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Loop\Loop.ino]]></data>
           <data key="d6">
             <y:ShapeNode>
-              <y:Geometry height="78.31729280940759" width="242.134765625" x="9.282802867337068" y="-179.98563337821258"/>
+              <y:Geometry height="78.31729280940759" width="242.134765625" x="1083.9516611150107" y="611.7127981103871"/>
               <y:Fill color="#FFCC00" transparent="false"/>
               <y:BorderStyle color="#000000" raised="false" type="line" width="1.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="48.103515625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="232.134765625" x="5.0" y="15.106888592203802">Setup or preSetup
@@ -1975,8 +1975,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="0.0" ty="0.0">
-            <y:Point x="179.1988146667053" y="29.26321072118173"/>
-            <y:Point x="179.23772547404303" y="29.26321072118173"/>
+            <y:Point x="1253.867672914379" y="820.9616422097814"/>
+            <y:Point x="1253.9065837217167" y="820.9616422097814"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2008,12 +2008,12 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-129.61852531557386" sy="19.448256000000015" tx="0.0" ty="0.0">
-            <y:Point x="128.77643087777358" y="777.2235691222264"/>
-            <y:Point x="109.07244032874189" y="796.9275596712581"/>
+            <y:Point x="1203.4452891254473" y="1568.9220006108262"/>
+            <y:Point x="1183.7412985764156" y="1588.625991159858"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
-          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="82.03515625" x="-36.072799564193616" y="35.975822816304">planning PWM<y:LabelModel>
+          <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="Dialog" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="18.701171875" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="82.03515625" x="-36.09750668517245" y="35.953062898654025">planning PWM<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
             </y:LabelModel>
             <y:ModelParameter>
@@ -2169,8 +2169,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="62.53173828125" sy="19.448255999999994" tx="-32.685546875" ty="-19.448255999999994">
-            <y:Point x="-354.33061367166295" y="761.8010627437201"/>
-            <y:Point x="-260.95900993902404" y="804.3171178962498"/>
+            <y:Point x="720.3382445760108" y="1553.4994942323199"/>
+            <y:Point x="813.7098483086497" y="1596.0155493848495"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2192,8 +2192,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-104.21956380208331" sy="19.448255999999994" tx="-52.3583984375" ty="-19.448255999999994">
-            <y:Point x="-521.0819157549963" y="761.8010627437201"/>
-            <y:Point x="-662.8020995967621" y="804.3171178962498"/>
+            <y:Point x="553.5869424926774" y="1553.4994942323199"/>
+            <y:Point x="411.8667586509116" y="1596.0155493848495"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2205,10 +2205,10 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-88.32362196180554" sy="19.448255999999994" tx="0.0" ty="-19.448255999999986">
-            <y:Point x="-505.1859739147185" y="771.0277995525064"/>
-            <y:Point x="-514.7172646821971" y="780.559090319985"/>
-            <y:Point x="-856.7172646821971" y="780.559090319985"/>
-            <y:Point x="-867.6859332705918" y="791.5277589083797"/>
+            <y:Point x="569.4828843329552" y="1562.7262310411063"/>
+            <y:Point x="559.9515935654766" y="1572.2575218085847"/>
+            <y:Point x="217.95159356547663" y="1572.2575218085847"/>
+            <y:Point x="206.9829249770819" y="1583.2261903969795"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2220,8 +2220,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="32.685546875" sy="-19.448255999999994" tx="104.21956380208333" ty="19.448255999999994">
-            <y:Point x="-195.58791618902399" y="804.3171178962498"/>
-            <y:Point x="-312.64278815082963" y="761.8010627437201"/>
+            <y:Point x="879.0809420586497" y="1596.0155493848495"/>
+            <y:Point x="762.026070096844" y="1553.4994942323199"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2233,8 +2233,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="38.0205078125" sy="-19.448255999999994" tx="20.84391276041667" ty="19.448255999999994">
-            <y:Point x="-361.6652568388256" y="809.3171178962498"/>
-            <y:Point x="-396.01843919249626" y="761.8010627437201"/>
+            <y:Point x="713.0036014088481" y="1601.0155493848495"/>
+            <y:Point x="678.6504190551775" y="1553.4994942323199"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2246,8 +2246,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="52.3583984375" sy="-19.448255999999994" tx="-62.53173828125" ty="19.448255999999994">
-            <y:Point x="-558.0853027217621" y="804.3171178962498"/>
-            <y:Point x="-479.39409023416295" y="761.8010627437201"/>
+            <y:Point x="516.5835555259116" y="1596.0155493848495"/>
+            <y:Point x="595.2747680135108" y="1553.4994942323199"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
@@ -2279,8 +2279,8 @@ current_general_emotional_system_state = calm;<y:LabelModel>
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="0.0" tx="-94.23080017975506" ty="19.448256000000015">
-            <y:Point x="128.60416925627985" y="1086.3958307437201"/>
-            <y:Point x="151.13523891203087" y="1063.864761087969"/>
+            <y:Point x="1203.2730275039535" y="1878.09426223232"/>
+            <y:Point x="1225.8040971597047" y="1855.5631925765688"/>
           </y:Path>
           <y:LineStyle color="#000000" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>

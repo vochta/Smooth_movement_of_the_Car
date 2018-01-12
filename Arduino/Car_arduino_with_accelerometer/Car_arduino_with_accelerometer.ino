@@ -397,7 +397,7 @@ void loop()
         }
     
         new_message_available = true;
-        digitalWrite(12, false);
+      //  digitalWrite(12, false);
     }
     else 
     {
