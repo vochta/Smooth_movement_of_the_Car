@@ -1,0 +1,322 @@
+dv_dPWM: 0.04
+target_PWM_right: 0.00
+dt: 140
+target_PWM: 0.00
+dPWM: 0.00
+dt: 138
+target_PWM: 0.00
+dPWM: 0.00
+-1
+	sum vel: -1.54
+v: 0
+dv_dPWM: 0.04
+target_PWM_right: 0.00
+dt: 138
+target_PWM: 0.00
+dPWM: 0.00
+dt: 136
+target_PWM: 0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: -1.82
+dv_dPWM_of_mpu: 0.04
+PWM_of_mpu: 0.00
+dt: 139
+target_PWM: -70.00
+dPWM: 4.86
+dt: 137
+target_PWM: -70.00
+dPWM: 4.80
+FIFO overflow!
+sum vel: -0.28
+dt: 135
+target_PWM: -70.00
+dPWM: 4.73
+dt: 135
+target_PWM: -70.00
+dPWM: 4.73
+-5
+	sum vel: -1.12
+dv_dPWM_of_mpu: 0.04
+PWM_of_mpu: -9.56
+dt: 137
+target_PWM: -25.69
+dPWM: 1.76
+dt: 138
+target_PWM: -25.69
+dPWM: 1.77
+FIFO overflow!
+sum vel: -2.07
+dt: 135
+target_PWM: -25.69
+dPWM: 1.73
+dt: 136
+target_PWM: -25.69
+dPWM: 1.75
+3
+	sum vel: -2.48
+dv_dPWM_of_mpu: 0.12
+PWM_of_mpu: -13.06
+dt: 139
+target_PWM: -4.23
+dPWM: 0.29
+dt: 138
+target_PWM: -4.23
+dPWM: 0.29
+FIFO overflow!
+sum vel: 0.83
+dt: 134
+target_PWM: -4.23
+dPWM: 0.28
+dt: 135
+target_PWM: -4.23
+dPWM: 0.29
+8
+	sum vel: 2.35
+dv_dPWM_of_mpu: 0.71
+PWM_of_mpu: -12.48
+dt: 137
+target_PWM: -0.74
+dPWM: 0.05
+dt: 137
+target_PWM: -0.74
+dPWM: 0.05
+FIFO overflow!
+sum vel: 2.21
+dt: 135
+target_PWM: -0.74
+dPWM: 0.05
+dt: 134
+target_PWM: -0.74
+dPWM: 0.05
+14
+	sum vel: 5.24
+dv_dPWM_of_mpu: 4.07
+PWM_of_mpu: -12.38
+dt: 138
+target_PWM: -0.06
+dPWM: 0.00
+dt: 139
+target_PWM: -0.06
+dPWM: 0.00
+FIFO overflow!
+sum vel: 3.84
+dt: 134
+target_PWM: -0.06
+dPWM: 0.00
+dt: 135
+target_PWM: -0.06
+dPWM: 0.00
+-7
+	sum vel: 4.80
+dv_dPWM_of_mpu: 52.45
+PWM_of_mpu: -12.38
+dt: 137
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: -1.93
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+dt: 135
+target_PWM: -0.00
+dPWM: 0.00
+2
+	sum vel: -2.62
+dv_dPWM_of_mpu: 614.21
+PWM_of_mpu: -12.37
+dt: 139
+target_PWM: 0.00
+dPWM: 0.00
+dt: 139
+target_PWM: 0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 0.55
+dt: 134
+target_PWM: 0.00
+dPWM: 0.00
+dt: 134
+target_PWM: 0.00
+dPWM: 0.00
+5
+	sum vel: 1.51
+dv_dPWM_of_mpu: -3944.57
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+dt: 137
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 1.37
+dt: 135
+target_PWM: -0.00
+dPWM: 0.00
+dt: 135
+target_PWM: -0.00
+dPWM: 0.00
+3
+	sum vel: 2.48
+dv_dPWM_of_mpu: 14684.92
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 0.83
+dt: 136
+target_PWM: -0.00
+dPWM: 0.00
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+-10
+	sum vel: -0.14
+dv_dPWM_of_mpu: 89490.53
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: 0.00
+dPWM: 0.00
+dt: 138
+target_PWM: 0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: -2.76
+dt: 134
+target_PWM: 0.00
+dPWM: 0.00
+dt: 134
+target_PWM: 0.00
+dPWM: 0.00
+14
+	sum vel: -2.21
+dv_dPWM_of_mpu: -36044.80
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: 0.00
+dPWM: 0.00
+dt: 137
+target_PWM: 0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 3.85
+dt: 135
+target_PWM: 0.00
+dPWM: 0.00
+dt: 135
+target_PWM: 0.00
+dPWM: 0.00
+-10
+	sum vel: 4.40
+dv_dPWM_of_mpu: -192937.98
+PWM_of_mpu: -12.37
+dt: 137
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: -2.75
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+dt: 135
+target_PWM: -0.00
+dPWM: 0.00
+0
+	sum vel: -4.13
+dv_dPWM_of_mpu: 2306867.25
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 0.00
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+dt: 136
+target_PWM: -0.00
+dPWM: 0.00
+0
+	sum vel: 0.00
+dv_dPWM_of_mpu: 2306867.25
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 0.00
+dt: 135
+target_PWM: -0.00
+dPWM: 0.00
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+0
+	sum vel: 0.00
+dv_dPWM_of_mpu: 2306867.25
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 0.00
+dt: 135
+target_PWM: -0.00
+dPWM: 0.00
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+0
+	sum vel: 0.00
+dv_dPWM_of_mpu: 2306867.25
+PWM_of_mpu: -12.37
+dt: 139
+target_PWM: -0.00
+dPWM: 0.00
+dt: 139
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: 0.00
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+dt: 134
+target_PWM: -0.00
+dPWM: 0.00
+-3
+	sum vel: -0.41
+dv_dPWM_of_mpu: 2306867.25
+PWM_of_mpu: -12.37
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+dt: 138
+target_PWM: -0.00
+dPWM: 0.00
+FIFO overflow!
+sum vel: -0.83
+dt: 134
+target_PWM: -0.00
+dPWM

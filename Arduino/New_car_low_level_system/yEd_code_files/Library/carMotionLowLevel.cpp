@@ -2,6 +2,7 @@
 #include <StandardCplusplus.h>
 #include <vector>
 
+
 void radioStation::radioInit()
 {
 	vw_setup(2000); // Bits per sec
@@ -187,10 +188,19 @@ void Machine_room::change_arduino_PWM_frequancy_to_4000()
     TCCR4B |= myPrescaler;  // this operation (OR), replaces the last three bits in TCCR2B with our new value 011  
 }
 
-float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, int target_PWM)
+float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM)
 {
 	unsigned long dt = millis() - t_PWM_was_set;
-    float dPWM = dt*float(abs(target_PWM))/time_for_commands_execution_from_stop_state;
+    float dPWM = dt*(fabsf(target_PWM))/time_for_commands_execution_from_stop_state;
+
+	
+	Serial.print("dt: ");
+	Serial.println(dt);
+	Serial.print("target_PWM: ");
+	Serial.println(target_PWM);	
+	Serial.print("dPWM: ");
+	Serial.println(dPWM);
+	
 	if (dPWM < abs(target_PWM - current_PWM)) // если шаг dPWM_drive, который сейчас нужно будет сделать, больше, чем осталось до target_PWM, то его не делаем, а просто считаем что цель достигнута и ставим current_PWM = target_PWM.  Это чтобы ШИМ не болтало из стороны в сторону - то перепрыгнули в одну сторону, потом в другую.
 	{
 		if (current_PWM > target_PWM)
@@ -208,9 +218,14 @@ float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was
 
 void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_dPWM )
 {
+	if (dv_dPWM == 0)    // заплатка...
+	{
+		dv_dPWM = 3.0/70.0;
+	}
+	
 	if ((w==0)&&(v != 0))
 	{
-		target_PWM_right = v / dv_dPWM;
+		target_PWM_right = v / dv_dPWM;   // как  оно может быть типа int ,  если его значение определяется делением?!!
 		target_PWM_left = target_PWM_right;
 	}		
 	else if ((v==0)&&(w!=0))
@@ -218,35 +233,50 @@ void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_d
 		target_PWM_right = 3.14*d_beatween_wheels*w/360/2/dv_dPWM;
 		target_PWM_left = - target_PWM_right;
 	}
+	
+	if (target_PWM_right == 0)
+	{
+		Serial.print("v: ");
+		Serial.println(v);
+		
+		Serial.print("dv_dPWM: ");
+		Serial.println(dv_dPWM);
+		
+		Serial.print("target_PWM_right: ");
+		Serial.println(target_PWM_right);
+		
+	//	delay(3000);
+	}
+	
 }
 
-void Motion_model_of_the_car::calculate_PWM_of_center(int PWM_left, int PWM_right)
+void Motion_model_of_the_car::calculate_PWM_of_center(float PWM_left, float PWM_right)
 {
-	PWM_of_center = PWM_left + PWM_right;
+	PWM_of_center = (PWM_left + PWM_right)/2;
 }
 
-int Motion_model_of_the_car::tell_PWM_of_center()
+float Motion_model_of_the_car::tell_PWM_of_center()
 {
 	return PWM_of_center;
 }
 
-int Motion_model_of_the_car::calculate_PWM_of_mpu(int PWM_left, int PWM_right)
+float Motion_model_of_the_car::calculate_PWM_of_mpu(float PWM_left, float PWM_right)
 {
-	PWM_of_mpu = PWM_left + PWM_right;
+	PWM_of_mpu = (PWM_left + PWM_right)/2;
 	return PWM_of_mpu;
 }
 
-int Motion_model_of_the_car::tell_PWM_of_mpu()
+float Motion_model_of_the_car::tell_PWM_of_mpu()
 {
 	return PWM_of_mpu;
 }
 
-int Motion_model_of_the_car::tell_target_PWM_left()
+float Motion_model_of_the_car::tell_target_PWM_left()
 {
 	return target_PWM_left;
 }
 
-int Motion_model_of_the_car::tell_target_PWM_right()
+float Motion_model_of_the_car::tell_target_PWM_right()
 {
 	return target_PWM_right;
 }
@@ -405,7 +435,7 @@ void Monitoring_feedback_circuit::monitoringInit()
 	v_calculator.velocity_calculatorInit();
 }
 
-void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(int PWM_of_mpu)
+void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu)
 {
 	v_calculator.calculate_inst_velocity();
 	v_calculator.sum_inst_velocity();
@@ -418,9 +448,13 @@ void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(int PWM_of_mpu)
 		Serial.println(dv_dPWM_of_mpu);
 		Serial.print("PWM_of_mpu: ");
 		Serial.println(PWM_of_mpu);
-		dv_dPWM_of_mpu = v_calculator.tell_sum_velocity()/(PWM_of_mpu - PWM_mpu_start + 0.5);
+		float dPWM = (PWM_of_mpu - PWM_mpu_start);
+		if (dPWM!=0)
+		{
+			dv_dPWM_of_mpu = v_calculator.tell_sum_velocity()/dPWM;
+			PWM_mpu_start = PWM_of_mpu;
+		}
 		v_calculator.clear_sum_velocity();
-		PWM_mpu_start = PWM_of_mpu;		
 		t_mes_start = millis();
 	}
 }

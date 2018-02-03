@@ -43,7 +43,7 @@
 
 
 //*************************** Constants begin *********************
-#define def_max_PWM 255
+#define def_max_PWM 255.0
 #define def_time_for_commands_execution_from_stop_state 2000; // миллисекунды
 #define def_duration_t_mes_inst_velocity 400; ; // миллисекунды
 
@@ -145,9 +145,9 @@ class Motor
 		byte motor_driver_pinA_id;
 		byte motor_driver_pinB_id;
 		byte motor_driver_PWM_pin_id;
-		byte max_PWM;
+		float max_PWM;
 		
-		float current_PWM = 0;
+		float current_PWM = 0.0;
 		unsigned long t_PWM_was_set = 0;
 		
 		void store_t_current_PWM_was_set();
@@ -175,25 +175,25 @@ class Machine_room
 	public:
 		Motor right_motor, left_motor;
 		void machine_roomInit();
-		float calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, int target_PWM);
+		float calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM);
 };
 
 class Motion_model_of_the_car
 {		
 		static const byte d_beatween_wheels = 20;  // 20cm
-		int target_PWM_left = 0;
-		int target_PWM_right = 0;
-		int PWM_of_center = 0;
-		int PWM_of_mpu = 0;
+		float target_PWM_left = 0.0;
+		float target_PWM_right = 0.0;
+		float PWM_of_center = 0.0;
+		float PWM_of_mpu = 0.0;
 
 	public:
 		void calculate_new_target_PWMs(int v, int w, float dv_dPWM);
-		int tell_target_PWM_left();
-		int tell_target_PWM_right();
-		void calculate_PWM_of_center(int PWM_right, int PWM_left);
-		int tell_PWM_of_center();
-		int calculate_PWM_of_mpu(int PWM_right, int PWM_left);
-		int tell_PWM_of_mpu();
+		float tell_target_PWM_left();
+		float tell_target_PWM_right();
+		void calculate_PWM_of_center(float PWM_right, float PWM_left);
+		float tell_PWM_of_center();
+		float calculate_PWM_of_mpu(float PWM_right, float PWM_left);
+		float tell_PWM_of_mpu();
 };		
 
 class Mpu_values
@@ -213,8 +213,8 @@ class Mpu_values
 		VectorFloat gravity;    // [x, y, z]            gravity vector
 		VectorInt16 aaReal_previous; 
 		
-		float t_new_acc_was_gotten = 0;
-		float t_previous_acc_was_gotten = 0;
+		float t_new_acc_was_gotten = 0.0;
+		float t_previous_acc_was_gotten = 0.0;
 		
 			
 		
@@ -231,8 +231,8 @@ class Mpu_values
 class Instantaneous_velocity_calculator
 {
 		Mpu_values mpu_val;
-		float inst_velocity = 0;
-		float sum_velocity = 0;
+		float inst_velocity = 0.0;
+		float sum_velocity = 0.0;
 
 	public:
 		void velocity_calculatorInit();
@@ -253,7 +253,7 @@ class Monitoring_feedback_circuit
 		
 	public:
 		void monitoringInit();
-		void calculate_new_dv_dPWM_of_mpu(int PWM_of_mpu);
+		void calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu);
 		float tell_dv_dPWM_of_mpu();
 };
 
