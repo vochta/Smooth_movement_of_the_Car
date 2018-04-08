@@ -193,13 +193,15 @@ float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was
 	unsigned long dt = millis() - t_PWM_was_set;
     float dPWM = dt*(fabsf(target_PWM))/time_for_commands_execution_from_stop_state;
 
-	
-	Serial.print("dt: ");
-	Serial.println(dt);
-	Serial.print("target_PWM: ");
-	Serial.println(target_PWM);	
-	Serial.print("dPWM: ");
-	Serial.println(dPWM);
+	if (debug_serial_print_1)
+	{	
+		Serial.print("dt: ");
+		Serial.println(dt);
+		Serial.print("target_PWM: ");
+		Serial.println(target_PWM);	
+		Serial.print("dPWM: ");
+		Serial.println(dPWM);
+	}
 	
 	if (dPWM < abs(target_PWM - current_PWM)) // если шаг dPWM_drive, который сейчас нужно будет сделать, больше, чем осталось до target_PWM, то его не делаем, а просто считаем что цель достигнута и ставим current_PWM = target_PWM.  Это чтобы ШИМ не болтало из стороны в сторону - то перепрыгнули в одну сторону, потом в другую.
 	{
@@ -236,15 +238,17 @@ void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_d
 	
 	if (target_PWM_right == 0)
 	{
-		Serial.print("v: ");
-		Serial.println(v);
-		
-		Serial.print("dv_dPWM: ");
-		Serial.println(dv_dPWM);
-		
-		Serial.print("target_PWM_right: ");
-		Serial.println(target_PWM_right);
-		
+		if (debug_serial_print_1)
+		{
+			Serial.print("v: ");
+			Serial.println(v);
+			
+			Serial.print("dv_dPWM: ");
+			Serial.println(dv_dPWM);
+			
+			Serial.print("target_PWM_right: ");
+			Serial.println(target_PWM_right);
+		}
 	//	delay(3000);
 	}
 	
@@ -376,7 +380,10 @@ void Mpu_values::getAccelerationsValues()
 	{
 		// reset so we can continue cleanly
 		mpu.resetFIFO();
-		Serial.println(F("FIFO overflow!"));
+		if (debug_serial_print_1)
+		{	
+			Serial.println(F("FIFO overflow!"));
+		}
 		
 	// otherwise, check for DMP data ready interrupt (this should happen frequently)
 	} 
@@ -397,8 +404,15 @@ void Mpu_values::getAccelerationsValues()
 /*		Serial.print("areal\t");
 		Serial.print(aaReal.x);
 		Serial.print("\t");
-*/		Serial.println(aaReal.y);
-		Serial.print("\t");
+		
+*/		if (debug_serial_print_vchart)
+		{
+		/*	Serial.println("accY");
+			Serial.println(aaReal.y);
+			Serial.println(millis());
+			*/
+		}
+		
 /*		Serial.println(aaReal.z);
 */
 	}       
@@ -422,7 +436,7 @@ void Instantaneous_velocity_calculator::clear_sum_velocity()
 
 void Instantaneous_velocity_calculator::calculate_inst_velocity()
 {
-	inst_velocity = (mpu_val.tell_t_new_acc_was_gotten()-mpu_val.tell_t_previous_acc_was_gotten())*(mpu_val.tell_acc_y()+mpu_val.tell_acc_y_previous())/2000;
+	inst_velocity = (mpu_val.tell_t_new_acc_was_gotten()-mpu_val.tell_t_previous_acc_was_gotten())*(mpu_val.tell_acc_y()+mpu_val.tell_acc_y_previous())/2000;  // 2000 - это  на сколько помню просто коэффициент перевода данных акселлерометра в м/с или см/с...
 }
 
 void Instantaneous_velocity_calculator::sum_inst_velocity()
@@ -439,15 +453,31 @@ void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu)
 {
 	v_calculator.calculate_inst_velocity();
 	v_calculator.sum_inst_velocity();
-	Serial.print("sum vel: ");
-	Serial.println(v_calculator.tell_sum_velocity());
+	if (debug_serial_print_1)
+	{
+		Serial.print("sum vel: ");
+		Serial.println(v_calculator.tell_sum_velocity());
+	}
 	
 	if ((millis() - t_mes_start) > duration_t_mes_inst_velocity)
 	{
-		Serial.print("dv_dPWM_of_mpu: ");
-		Serial.println(dv_dPWM_of_mpu);
-		Serial.print("PWM_of_mpu: ");
-		Serial.println(PWM_of_mpu);
+		if (debug_serial_print_1)
+		{
+			Serial.print("dv_dPWM_of_mpu: ");
+			Serial.println(dv_dPWM_of_mpu);
+			Serial.print("PWM_of_mpu: ");
+			Serial.println(PWM_of_mpu);
+		}
+		
+		if (debug_serial_print_vchart)
+		{		
+			if (v_calculator.tell_sum_velocity()>200) Serial.println("************************************");
+			Serial.println("sumv");
+			Serial.println(v_calculator.tell_sum_velocity());
+			Serial.println(millis());//debug_points_counter++);
+			
+		}	
+		
 		float dPWM = (PWM_of_mpu - PWM_mpu_start);
 		if (dPWM!=0)
 		{

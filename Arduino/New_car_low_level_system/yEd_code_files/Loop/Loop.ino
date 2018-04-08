@@ -1,5 +1,5 @@
-#include <D:\Robot\GitHub\Smooth_movement_of_the_Car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.h>
-#include <D:\Robot\GitHub\Smooth_movement_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.cpp>
+#include <E:\Robot\GitHub\Smooth_movement_of_the_Car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.h>
+#include <E:\Robot\GitHub\Smooth_movement_of_the_car\Arduino\New_car_low_level_system\yEd_code_files\Library\carMotionLowLevel.cpp>
 
 
 radioStation radio;
@@ -11,7 +11,7 @@ Monitoring_feedback_circuit monitoring;
 
 void setup()
 {
-	Serial.begin(115200);
+	Serial.begin(9600);
 	pinMode(13, OUTPUT);
 	
 	carDisp.displayInit();
@@ -27,7 +27,7 @@ void setup()
 void loop()
 {
 	radio.recieveCommand ();
-	carDisp.printlnMessage(String(radio.tell_command_message()));
+/*	carDisp.printlnMessage(String(radio.tell_command_message()));
 	carDisp.printMessage(String(radio.tell_v_target_of_center()));
 	carDisp.printlnMessage(String(radio.tell_w_target()));
 	
@@ -37,7 +37,10 @@ void loop()
 	carDisp.printMessage(String(model.tell_target_PWM_right()));		
 //	delay(500);
 	carDisp.displayClear();
-
+*/
+	carDisp.displayClear();
+	carDisp.printlnMessage(String(millis()));
+	
 	model.calculate_new_target_PWMs(radio.tell_v_target_of_center(), radio.tell_w_target(), monitoring.tell_dv_dPWM_of_mpu());
 	
 	machine_room.left_motor.set_new_PWM_to_current_PWM(machine_room.calculate_new_PWM(machine_room.left_motor.tell_current_PWM(), machine_room.left_motor.tell_t_PWM_was_set(), model.tell_target_PWM_left()));

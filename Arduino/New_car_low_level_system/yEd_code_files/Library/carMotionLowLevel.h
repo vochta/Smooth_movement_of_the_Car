@@ -100,6 +100,10 @@
 
 //*************************** Constants end ************************
 
+bool debug_serial_print_1 = 1; // определяет отправлять или нет обущую отладочную информацию в последовательный порт
+bool debug_serial_print_vchart = 1; // определяет отправлять или нет отладочную информацию для вывода графика в последовательный порт
+
+int debug_points_counter = 0;
 
 class radioStation
 {
@@ -244,7 +248,7 @@ class Instantaneous_velocity_calculator
 		
 class Monitoring_feedback_circuit
 {
-		const byte duration_t_mes_inst_velocity = def_duration_t_mes_inst_velocity;
+		const int duration_t_mes_inst_velocity = def_duration_t_mes_inst_velocity;
 		float dv_dPWM_of_mpu = 3.0/70.0; //def start
 		float PWM_mpu_start;
 		unsigned long t_mes_start;
