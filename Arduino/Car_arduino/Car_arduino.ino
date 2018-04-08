@@ -13,8 +13,8 @@
 
 //*************************** Settings begin *********************************
 
-byte drive_PWM = 60;
-byte turn_PWM = 70;
+byte drive_PWM = 80;
+byte turn_PWM = 80;
 
 //*************************** Settings end *********************************
 
