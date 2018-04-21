@@ -83,6 +83,11 @@ void radioStation::decryptCommand()
 		v_target_of_center = 0;
 		w_target_of_car = 10;		
 	}	
+	else if (command_message =="5")
+	{
+		v_target_of_center = 0;
+		w_target_of_car = 0;		
+	}	
 }
 
 void carDisplay::displayInit()

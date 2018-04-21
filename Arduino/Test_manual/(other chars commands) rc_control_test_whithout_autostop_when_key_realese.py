@@ -70,7 +70,11 @@ class RCTest(object):
 
                     elif key_input[pygame.K_3]:
                         print("3")
-                        self.ser.write(chr(3))                        
+                        self.ser.write(chr(3))    
+						
+                    elif key_input[pygame.K_SPACE]:
+                        print("Stop")
+                        self.ser.write("5".encode())					
                                     
 
                     # exit
@@ -81,8 +85,8 @@ class RCTest(object):
                         self.ser.close()
                         break
 
-                elif event.type == pygame.KEYUP:
-                    self.ser.write("5".encode())
+       #         elif event.type == pygame.KEYUP:
+        #            self.ser.write("5".encode())
 
 if __name__ == '__main__':
     RCTest()
