@@ -11,7 +11,7 @@ Monitoring_feedback_circuit monitoring;
 
 void setup()
 {
-	Serial.begin(9600);
+	Serial.begin(57600);
 	pinMode(13, OUTPUT);
 	
 	carDisp.displayInit();
@@ -38,8 +38,8 @@ void loop()
 //	delay(500);
 	carDisp.displayClear();
 */
-	carDisp.displayClear();
-	carDisp.printlnMessage(String(millis()));
+//	carDisp.displayClear();
+//	carDisp.printlnMessage(String(millis()));
 	
 	model.calculate_new_target_PWMs(radio.tell_v_target_of_center(), radio.tell_w_target(), monitoring.tell_dv_dPWM_of_mpu());
 	

@@ -29,9 +29,21 @@ char radioStation::recieveCommand()
           command_message += char(buf[i]);
         }
 		decryptCommand();
-		return (1);
+
+		if (debug_radioStation)
+		{	
+			Serial.println("val_command_message");
+			Serial.println(command_message);
+		}		
+		
+	//	return (1);
     }
-	return (0);
+//	return (0);
+	if (debug_radioStation)
+	{	
+		Serial.println("val_v_target_of_center");
+		Serial.println(v_target_of_center);
+	}	
 }
 
 String radioStation::tell_command_message()
@@ -215,14 +227,21 @@ float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was
 		}
 	}
 	else current_PWM = target_PWM;
-    return current_PWM;
+	if (debug_serial_print_vchart_PWM)
+	{	
+		Serial.println("val_current_PWM");
+		Serial.println(current_PWM);
+		Serial.println(millis());
+	}    
+	
+	return current_PWM;
 }
 
 void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_dPWM )
 {
 	if (dv_dPWM == 0)    // заплатка...
 	{
-		dv_dPWM = 3.0/70.0;
+		dv_dPWM = def_start_dv_dPWM_of_mpu;
 	}
 	
 	if ((w==0)&&(v != 0))
@@ -252,6 +271,12 @@ void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_d
 	//	delay(3000);
 	}
 	
+	if (debug_serial_print_vchart_PWM)
+	{	
+		Serial.println("val_target_PWM_right");
+		Serial.println(target_PWM_right);
+		Serial.println(millis());
+	}	
 }
 
 void Motion_model_of_the_car::calculate_PWM_of_center(float PWM_left, float PWM_right)
@@ -380,9 +405,9 @@ void Mpu_values::getAccelerationsValues()
 	{
 		// reset so we can continue cleanly
 		mpu.resetFIFO();
-		if (debug_serial_print_1)
+		if (debug_serial_print_FIFO_overflow)
 		{	
-			Serial.println(F("FIFO overflow!"));
+			Serial.println(F(" ************************************* FIFO overflow! ****************"));
 		}
 		
 	// otherwise, check for DMP data ready interrupt (this should happen frequently)
@@ -405,12 +430,12 @@ void Mpu_values::getAccelerationsValues()
 		Serial.print(aaReal.x);
 		Serial.print("\t");
 		
-*/		if (debug_serial_print_vchart)
+*/		if (debug_serial_print_vchart_acc)
 		{
-		/*	Serial.println("accY");
+			Serial.println("val");
 			Serial.println(aaReal.y);
 			Serial.println(millis());
-			*/
+			
 		}
 		
 /*		Serial.println(aaReal.z);
@@ -453,6 +478,7 @@ void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu)
 {
 	v_calculator.calculate_inst_velocity();
 	v_calculator.sum_inst_velocity();
+	
 	if (debug_serial_print_1)
 	{
 		Serial.print("sum vel: ");
@@ -469,21 +495,29 @@ void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu)
 			Serial.println(PWM_of_mpu);
 		}
 		
-		if (debug_serial_print_vchart)
-		{		
-			if (v_calculator.tell_sum_velocity()>200) Serial.println("************************************");
-			Serial.println("sumv");
+		if (debug_serial_print_vchart_sum_v)
+		{	
+			Serial.println("val_sum_v");
 			Serial.println(v_calculator.tell_sum_velocity());
-			Serial.println(millis());//debug_points_counter++);
-			
+			Serial.println(millis());
 		}	
+		
 		
 		float dPWM = (PWM_of_mpu - PWM_mpu_start);
 		if (dPWM!=0)
 		{
 			dv_dPWM_of_mpu = v_calculator.tell_sum_velocity()/dPWM;
-			PWM_mpu_start = PWM_of_mpu;
+			PWM_mpu_start = PWM_of_mpu;			
 		}
+
+		if (debug_serial_print_vchart_PWM)
+		{	
+			Serial.println("val_dv_dPWM_of_mpu");
+			Serial.println(dv_dPWM_of_mpu);
+			Serial.println(millis());
+		}		
+	
+		
 		v_calculator.clear_sum_velocity();
 		t_mes_start = millis();
 	}

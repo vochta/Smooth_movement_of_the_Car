@@ -9,7 +9,7 @@ class RCTest(object):
 
     def __init__(self):
         pygame.init()
-        self.ser = serial.Serial('COM5', 9600, timeout=1)
+        self.ser = serial.Serial('COM4', 9600, timeout=1)
         self.send_inst = True
         self.steer()
 
@@ -42,19 +42,19 @@ class RCTest(object):
                     # simple orders
                     elif key_input[pygame.K_UP]:
                         print("Forward")
-                        self.ser.write(chr(8))
+                        self.ser.write("8".encode())
 
                     elif key_input[pygame.K_DOWN]:
                         print("Reverse")
-                        self.ser.write(chr(2))
+                        self.ser.write("2".encode())
 
                     elif key_input[pygame.K_RIGHT]:
                         print("Right")
-                        self.ser.write(chr(6))
+                        self.ser.write("6".encode())
 
                     elif key_input[pygame.K_LEFT]:
                         print("Left")
-                        self.ser.write(chr(4))
+                        self.ser.write("4".encode())
                         
                     elif key_input[pygame.K_7]:
                         print("7")
@@ -70,39 +70,19 @@ class RCTest(object):
 
                     elif key_input[pygame.K_3]:
                         print("3")
-                        self.ser.write(chr(3))
-                        
-                    elif key_input[pygame.K_SPACE]:
-                        print("Stop")
-                        self.ser.write(chr(5))  
-                        
-                    elif key_input[pygame.K_KP_PLUS]:
-                        self.ser.write(chr(9))
-                        print("drive_PWM up!")
-                        
-                    elif key_input[pygame.K_KP_MINUS]:
-                        self.ser.write(chr(7))
-                        print("drive_PWM down!")      
-
-                    elif key_input[pygame.K_a]:
-                        self.ser.write(chr(3))
-                        print("turn_PWM up!")
-                        
-                    elif key_input[pygame.K_z]:
-                        self.ser.write(chr(1))
-                        print("turn_PWM down!")                          
-                            
+                        self.ser.write(chr(3))                        
+                                    
 
                     # exit
                     elif key_input[pygame.K_x] or key_input[pygame.K_q]:
-                        print 'Exit'
+                        print ('Exit')
                         self.send_inst = False
-                        self.ser.write(chr(5))
+                        self.ser.write("5".encode())
                         self.ser.close()
                         break
 
-         #       elif event.type == pygame.KEYUP:
-          #          self.ser.write(chr(5))
+                elif event.type == pygame.KEYUP:
+                    self.ser.write("5".encode())
 
 if __name__ == '__main__':
     RCTest()

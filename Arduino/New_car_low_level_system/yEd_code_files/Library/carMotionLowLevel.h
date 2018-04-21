@@ -45,7 +45,9 @@
 //*************************** Constants begin *********************
 #define def_max_PWM 255.0
 #define def_time_for_commands_execution_from_stop_state 2000; // миллисекунды
-#define def_duration_t_mes_inst_velocity 400; ; // миллисекунды
+#define def_duration_t_mes_inst_velocity 100; ; // миллисекунды
+#define def_start_dv_dPWM_of_mpu 3.0/70.0; //def start
+#define def_d_beatween_wheels 20;  // 20cm
 
 
 // Begin motors driver (Monster shield) pins
@@ -98,12 +100,26 @@
 
 // ******** End MPU6050 ******************
 
-//*************************** Constants end ************************
+//*************************** Constants end ***********************************************************
 
-bool debug_serial_print_1 = 1; // определяет отправлять или нет обущую отладочную информацию в последовательный порт
-bool debug_serial_print_vchart = 1; // определяет отправлять или нет отладочную информацию для вывода графика в последовательный порт
 
-int debug_points_counter = 0;
+// ************************** Begin Debug flags *******************************************************
+
+const bool debug_serial_print_1 = 0; // определяет отправлять или нет обущую отладочную информацию в последовательный порт
+
+// определяет отправлять или нет отладочную информацию для вывода графика в последовательный порт
+const bool debug_serial_print_vchart_sum_v = 0;  // скорость в график отправлять
+const bool debug_serial_print_vchart_acc = 0;  // ускорение в график отправлять
+
+const bool debug_serial_print_FIFO_overflow = 1;  // Выводить ли в последовательный порт сообщение о переполнении буфера акселлерометра
+
+const bool debug_serial_print_vchart_PWM = 0;  // определяет отправлять или нет отладочную информацию для вывода разных PWM и dPWM в последовательный порт для формы с графиком
+
+const bool debug_radioStation = 1; // отладка приема и обработки команд
+
+
+// ************************** End Debug flags *******************************************************
+
 
 class radioStation
 {
@@ -184,7 +200,7 @@ class Machine_room
 
 class Motion_model_of_the_car
 {		
-		static const byte d_beatween_wheels = 20;  // 20cm
+		static const byte d_beatween_wheels = def_d_beatween_wheels; 
 		float target_PWM_left = 0.0;
 		float target_PWM_right = 0.0;
 		float PWM_of_center = 0.0;
@@ -249,7 +265,7 @@ class Instantaneous_velocity_calculator
 class Monitoring_feedback_circuit
 {
 		const int duration_t_mes_inst_velocity = def_duration_t_mes_inst_velocity;
-		float dv_dPWM_of_mpu = 3.0/70.0; //def start
+		float dv_dPWM_of_mpu = def_start_dv_dPWM_of_mpu; 
 		float PWM_mpu_start;
 		unsigned long t_mes_start;
 		float v_mes_start;
