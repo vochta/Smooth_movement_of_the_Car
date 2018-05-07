@@ -30,20 +30,21 @@ char radioStation::recieveCommand()
         }
 		decryptCommand();
 
-		if (debug_radioStation)
+/*		if (debug_radioStation)
 		{	
 			Serial.println("val_command_message");
 			Serial.println(command_message);
 		}		
-		
+*/		
 	//	return (1);
     }
 //	return (0);
-	if (debug_radioStation)
+/*	if (debug_radioStation)
 	{	
 		Serial.println("val_v_target_of_center");
 		Serial.println(v_target_of_center);
 	}	
+*/
 }
 
 String radioStation::tell_command_message()
@@ -208,7 +209,7 @@ void Machine_room::change_arduino_PWM_frequancy_to_4000()
 float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM)
 {
 	unsigned long dt = millis() - t_PWM_was_set;
-    float dPWM = dt*(fabsf(target_PWM))/time_for_commands_execution_from_stop_state;
+    float dPWM = dt*(fabsf(target_PWM))/time_for_commands_execution_from_stop_state;   // исходя из желаемой плавности хода, плавности изменения ШИМ, на сколько я могу его изменить исходя из прошедшего времени
 
 	if (debug_serial_print_1)
 	{	
@@ -232,6 +233,7 @@ float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was
 		}
 	}
 	else current_PWM = target_PWM;
+	
 	if (debug_serial_print_vchart_PWM)
 	{	
 		Serial.println("val_current_PWM");
