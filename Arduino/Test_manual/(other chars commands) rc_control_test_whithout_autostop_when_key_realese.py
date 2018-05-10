@@ -54,27 +54,27 @@ class RCTest(object):
 
                     elif key_input[pygame.K_LEFT]:
                         print("Left")
-                        self.ser.write("4".encode())
-                        
-                    elif key_input[pygame.K_7]:
-                        print("7")
-                        self.ser.write(chr(7))                        
-                        
-                    elif key_input[pygame.K_9]:
-                        print("9")
-                        self.ser.write(chr(9))
-
-                    elif key_input[pygame.K_1]:
-                        print("1")
-                        self.ser.write(chr(1))
-
-                    elif key_input[pygame.K_3]:
-                        print("3")
-                        self.ser.write(chr(3))    
+                        self.ser.write("4".encode())   
 						
                     elif key_input[pygame.K_SPACE]:
                         print("Stop")
-                        self.ser.write("5".encode())					
+                        self.ser.write("5".encode())		
+						
+                    elif key_input[pygame.K_KP_PLUS]:
+                        self.ser.write("+".encode())
+                        print("drive_PWM up!")
+                        
+                    elif key_input[pygame.K_KP_MINUS]:
+                        self.ser.write("-".encode())
+                        print("drive_PWM down!")      
+
+                    elif key_input[pygame.K_a]:
+                        self.ser.write("a".encode())
+                        print("turn_PWM up!")
+                        
+                    elif key_input[pygame.K_z]:
+                        self.ser.write("z".encode())
+                        print("turn_PWM down!")    						
                                     
 
                     # exit
