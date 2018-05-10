@@ -50,5 +50,8 @@ void loop()
 	
 	monitoring.calculate_new_dv_dPWM_of_mpu(model.calculate_PWM_of_mpu(machine_room.right_motor.tell_current_PWM(), machine_room.left_motor.tell_current_PWM()));
 	
+	monitoring.calculate_new_dv_dPWM_of_mpu_Kalman();
+	
+	
 }
 

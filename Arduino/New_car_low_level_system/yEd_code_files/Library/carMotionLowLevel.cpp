@@ -226,7 +226,7 @@ float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was
 		if (current_PWM > target_PWM)
 		{
 			current_PWM -= dPWM;
-		}
+		}	
 		else
 		{
 			current_PWM += dPWM;
@@ -248,7 +248,7 @@ void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_d
 {
 	if (dv_dPWM == 0)    // заплатка...
 	{
-		dv_dPWM = def_start_dv_dPWM_of_mpu;
+		dv_dPWM = def_start_EST_dv_dPWM_of_mpu;
 	}
 	
 	if ((w==0)&&(v != 0))
@@ -534,3 +534,25 @@ float Monitoring_feedback_circuit::tell_dv_dPWM_of_mpu()
 {
 	return dv_dPWM_of_mpu;
 }
+
+Simple_Kalman_values Simple_Kalman_filter::simple_Kalman_filter_step(Simple_Kalman_values val, float MEA, const float Emea)
+{
+	float KG = val.Eest/(val.Eest + Emea);// Kalman gain
+	val.EST = val.EST + KG*(MEA - val.EST);  // new estimation calculation using previous estimation 
+	val.Eest = val.Eest*Emea/(val.Eest+Emea);
+	return val;
+}
+
+Simple_Kalman_values Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu_Kalman()
+{
+	Simple_Kalman_filter kalman;
+	dv_dPWM_simple_Kalman_values = kalman.simple_Kalman_filter_step (dv_dPWM_simple_Kalman_values, dv_dPWM_of_mpu,  MEA_dv_dPWM_of_mpu_error);
+	
+	if (debug_serial_print_dv_dPWM_Kalman)
+	{	
+		Serial.println("val_dv_dPWM_Kalman");
+		Serial.println(dv_dPWM_simple_Kalman_values.EST);
+		Serial.println(millis());
+	}    
+}
+		

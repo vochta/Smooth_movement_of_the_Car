@@ -44,11 +44,14 @@
 
 //*************************** Constants begin *********************
 #define def_max_PWM 255.0
-#define def_time_for_commands_execution_from_stop_state 2000; // миллисекунды
-#define def_duration_t_mes_inst_velocity 100; ; // миллисекунды
-#define def_start_dv_dPWM_of_mpu 3.0/70.0; //def start
-#define def_d_beatween_wheels 20;  // 20cm
+#define def_start_v_target_of_center 0
+#define def_time_for_commands_execution_from_stop_state 200// миллисекунды
+#define def_duration_t_mes_inst_velocity 100// миллисекунды
+#define def_start_EST_dv_dPWM_of_mpu 40.0/90.0 //def start
+#define def_d_beatween_wheels 20  // 20cm
 
+#define def_start_EST_dv_dPWM_of_mpu_Kalman_error 0.5 // error in estimate
+#define def_start_MEA_dv_dPWM_of_mpu_error 15.0 // error in measurement
 
 // Begin motors driver (Monster shield) pins
 #define def_motor_left_driver_pinA_id 7
@@ -117,17 +120,18 @@ const bool debug_serial_print_vchart_PWM = 1;  // определяет отпр�
 
 const bool debug_radioStation = 0; // отладка приема и обработки команд
 
+#define debug_serial_print_dv_dPWM_Kalman 1 // отладка расчета dv_dPWM с помощью фильтра Калмана
 
 // ************************** End Debug flags *******************************************************
 
 
 class radioStation
 {
-		static const char good_message_recieved_pin = def_good_message_recieved_pin; // LED pin
-		static const char rx_pin = def_rx_pin; // data pin
+		const char good_message_recieved_pin = def_good_message_recieved_pin; // LED pin
+		const char rx_pin = def_rx_pin; // data pin
 		String command_message = ""; 
 
-		int v_target_of_center = 0;
+		int v_target_of_center = def_start_v_target_of_center;
 		int w_target_of_car = 0;
 
 		void decryptCommand();
@@ -144,11 +148,11 @@ class radioStation
 class carDisplay
 {
 		// LCD pins:
-		static const int8_t OLED_CLK = def_OLED_CLK;
-		static const int8_t OLED_MOSI = def_OLED_MOSI;
-		static const int8_t OLED_CS = def_OLED_CS;
-		static const int8_t OLED_DC = def_OLED_DC;
-		static const int8_t OLED_RESET = def_OLED_RESET;
+		const int8_t OLED_CLK = def_OLED_CLK;
+		const int8_t OLED_MOSI = def_OLED_MOSI;
+		const int8_t OLED_CS = def_OLED_CS;
+		const int8_t OLED_DC = def_OLED_DC;
+		const int8_t OLED_RESET = def_OLED_RESET;
 
 		Adafruit_SSD1306 car_display = {OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS};
 	
@@ -187,7 +191,7 @@ class Motor
 
 class Machine_room
 {
-		static const int time_for_commands_execution_from_stop_state = def_time_for_commands_execution_from_stop_state;
+		const int time_for_commands_execution_from_stop_state = def_time_for_commands_execution_from_stop_state;
 				
 
 		void change_arduino_PWM_frequancy_to_4000 ();
@@ -200,7 +204,7 @@ class Machine_room
 
 class Motion_model_of_the_car
 {		
-		static const byte d_beatween_wheels = def_d_beatween_wheels; 
+		const byte d_beatween_wheels = def_d_beatween_wheels; 
 		float target_PWM_left = 0.0;
 		float target_PWM_right = 0.0;
 		float PWM_of_center = 0.0;
@@ -261,12 +265,38 @@ class Instantaneous_velocity_calculator
 		float tell_sum_velocity();
 		void clear_sum_velocity();
 };	
-		
+
+
+class Simple_Kalman_values
+{
+	public:
+		float EST,  // estimate in Kalman filter (EST). Calculate dv_dPWM_of_mpu using simple Kalman filter 
+		Eest; // error in estimate dv_dPWM_of_mpu, step t-1
+};
+	
+class Simple_Kalman_filter
+{
+	public:
+		Simple_Kalman_values simple_Kalman_filter_step(Simple_Kalman_values val, float MEA, const float Emea);
+};
+	
 class Monitoring_feedback_circuit
 {
 		const int duration_t_mes_inst_velocity = def_duration_t_mes_inst_velocity;
-		float dv_dPWM_of_mpu = def_start_dv_dPWM_of_mpu; 
+		float dv_dPWM_of_mpu = def_start_EST_dv_dPWM_of_mpu; 
 		float PWM_mpu_start;
+
+		Simple_Kalman_values dv_dPWM_simple_Kalman_values = {def_start_EST_dv_dPWM_of_mpu, def_start_EST_dv_dPWM_of_mpu_Kalman_error}; // два значения для получения их из расчета и хранения до сдедующей итерации, где они нужны
+		
+		
+		/*
+		float EST_dv_dPWM_of_mpu_Kalman = def_start_EST_dv_dPWM_of_mpu; // estimate in Kalman filter (EST). Calculate dv_dPWM_of_mpu using simple Kalman filter 
+		float EST_dv_dPWM_of_mpu_Kalman_error = def_start_EST_dv_dPWM_of_mpu_Kalman_error; // error in estimate dv_dPWM_of_mpu, step t-1
+		*/
+		const float MEA_dv_dPWM_of_mpu_error = def_start_MEA_dv_dPWM_of_mpu_error; // error in measurement dv_dPWM_of_mpu, const 
+		
+
+		
 		unsigned long t_mes_start;
 		float v_mes_start;
 		Instantaneous_velocity_calculator v_calculator;
@@ -275,6 +305,8 @@ class Monitoring_feedback_circuit
 		void monitoringInit();
 		void calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu);
 		float tell_dv_dPWM_of_mpu();
+		Simple_Kalman_values calculate_new_dv_dPWM_of_mpu_Kalman();
+		
 };
 
 
