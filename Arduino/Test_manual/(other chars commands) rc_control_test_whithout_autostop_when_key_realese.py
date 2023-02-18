@@ -81,7 +81,7 @@ class RCTest(object):
                     elif key_input[pygame.K_x] or key_input[pygame.K_q]:
                         print ('Exit')
                         self.send_inst = False
-                        self.ser.write("5".encode())
+                      #  self.ser.write("5".encode())
                         self.ser.close()
                         break
 

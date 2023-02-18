@@ -1,6 +1,6 @@
 #include "Arduino.h"
-#include <StandardCplusplus.h>
-#include <vector>
+//#include <StandardCplusplus.h>
+//#include <vector>
 
 
 void radioStation::radioInit()
@@ -10,6 +10,10 @@ void radioStation::radioInit()
     pinMode(rx_pin,INPUT);
     vw_set_rx_pin(rx_pin);
 	pinMode(good_message_recieved_pin, OUTPUT);
+
+    pinMode(tx_pin,OUTPUT);
+    vw_set_tx_pin(tx_pin);	
+	pinMode(message_transmitting_pin, OUTPUT);
 }
 
 char radioStation::recieveCommand()
@@ -36,15 +40,23 @@ char radioStation::recieveCommand()
 			Serial.println(command_message);
 		}		
 */		
-	//	return (1);
+		return (1);
     }
-//	return (0);
+	return (0);
 /*	if (debug_radioStation)
 	{	
 		Serial.println("val_v_target_of_center");
 		Serial.println(v_target_of_center);
 	}	
 */
+}
+
+void radioStation::sendMassage(char message[30])
+{
+	digitalWrite(message_transmitting_pin, true); // Flash a light to show transmitting
+    vw_send((uint8_t *)message,strlen(message));
+    vw_wait_tx(); // Wait until the whole message is gone
+    digitalWrite(message_transmitting_pin, false);
 }
 
 String radioStation::tell_command_message()
@@ -66,12 +78,12 @@ void radioStation::decryptCommand()
 {
 	if (command_message =="8" )
 	{
-		v_target_of_center = 3;
+		v_target_of_center = 40;
 		w_target_of_car = 0;
 	}
 	else if (command_message =="2")
 	{
-		v_target_of_center = -3;
+		v_target_of_center = -40;
 		w_target_of_car = 0;		
 	}
 	else if (command_message =="6")
@@ -134,9 +146,9 @@ void Motor::motorInit(const byte pinA,
 
 void Motor::set_new_PWM_to_current_PWM(float new_PWM)
 {
-    if (abs(new_PWM) > max_PWM)
+    if (fabsf(new_PWM) > max_PWM)
     {
-		current_PWM = ((new_PWM > 0) - (new_PWM < 0))*max_PWM;
+		current_PWM = my_sign(new_PWM)*max_PWM;
     }
 	else current_PWM = new_PWM;
 	set_current_PWM_to_pins();
@@ -161,7 +173,7 @@ void Motor::set_current_PWM_to_pins()
     }
     else
     {
-		powerToMotor(1,0, abs(current_PWM));
+		powerToMotor(1,0, fabsf(current_PWM));
     }
 }
 
@@ -179,7 +191,7 @@ unsigned long Motor::tell_t_PWM_was_set()
 
 void Machine_room::machine_roomInit()
 {
-	change_arduino_PWM_frequancy_to_4000();
+//	change_arduino_PWM_frequancy_to_4000();
 	left_motor.motorInit(def_motor_left_driver_pinA_id,
 			def_motor_left_driver_pinB_id,
 			def_motor_left_driver_PWM_pin_id,
@@ -206,42 +218,87 @@ void Machine_room::change_arduino_PWM_frequancy_to_4000()
     TCCR4B |= myPrescaler;  // this operation (OR), replaces the last three bits in TCCR2B with our new value 011  
 }
 
-float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM)
+float Machine_room::calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM, const bool PWM_with_swing)
 {
-	unsigned long dt = millis() - t_PWM_was_set;
-    float dPWM = dt*(fabsf(target_PWM))/time_for_commands_execution_from_stop_state;   // исходя из желаемой плавности хода, плавности изменения ШИМ, на сколько я могу его изменить исходя из прошедшего времени
-
-	if (debug_serial_print_1)
-	{	
-		Serial.print("dt: ");
-		Serial.println(dt);
-		Serial.print("target_PWM: ");
-		Serial.println(target_PWM);	
-		Serial.print("dPWM: ");
-		Serial.println(dPWM);
-	}
-	
-	if (dPWM < abs(target_PWM - current_PWM)) // если шаг dPWM_drive, который сейчас нужно будет сделать, больше, чем осталось до target_PWM, то его не делаем, а просто считаем что цель достигнута и ставим current_PWM = target_PWM.  Это чтобы ШИМ не болтало из стороны в сторону - то перепрыгнули в одну сторону, потом в другую.
+	if (target_PWM == 0)  // почти  заплатка, тк не учитывает желаемой плавности хода - сразу тормозит, сразу сбрасывает ШИМ до нуля
 	{
-		if (current_PWM > target_PWM)
-		{
-			current_PWM -= dPWM;
-		}	
-		else
-		{
-			current_PWM += dPWM;
-		}
+		current_PWM = 0;
 	}
-	else current_PWM = target_PWM;
+	else
+	{
+		unsigned long dt = millis() - t_PWM_was_set;
+		float dPWM = dt*(fabsf(target_PWM))/time_for_commands_execution_from_stop_state;   // исходя из желаемой плавности хода, плавности изменения ШИМ, на сколько я могу его изменить исходя из прошедшего времени. / Прошедшего времени с какого момента??  с последнего изменения PWM??  но это ведь уже выполнение новой команды может быть, через час, например! тогда по этому алгоритму PWM можно будет сразу конечный ставить, разом!  От получения команды нужно время как-то засекать, а не от последнего изменения ШИМ. Хотя тут время изменения ШИМ как параметр передается, можно где-то до это контроллировать.
+
+	/*	
+		if (dPWM < abs(target_PWM - current_PWM)) // если шаг dPWM_drive, который сейчас нужно будет сделать, больше, чем осталось до target_PWM, то его не делаем, а просто считаем что цель достигнута и ставим current_PWM = target_PWM.  Это чтобы ШИМ не болтало из стороны в сторону - то перепрыгнули в одну сторону, потом в другую.
+		{
+			if (current_PWM > target_PWM)
+			{
+				current_PWM -= dPWM;
+			}	
+			else
+			{
+				current_PWM += dPWM;
+			}
+		}
+		else current_PWM = target_PWM;
+	*/
+
+		
+	//************************************************************************
+		if (dPWM < fabsf(target_PWM - current_PWM)) // если шаг dPWM, который сейчас нужно будет сделать, больше, чем осталось до target_PWM, то его не делаем, а просто считаем что цель достигнута и считаем dPWM = target_PWM - current_PWM. Не просто приравниваем current_PWM к target_PWM для того, чтобы потом можно было дальше работать с dPWM и сравнить его с PWM_swing_abs
+
+		{
+			if (current_PWM > target_PWM)
+			{
+				dPWM = -dPWM;
+			}	
+		}
+		else dPWM = target_PWM - current_PWM;
+		
+		
+		if (PWM_with_swing)
+		{
+			float PWM_swing_abs = calculate_new_min_dPWM_swing_abs(target_PWM, def_min_dPWM_dtarget_PWM,dt);
+			
+			if (fabsf(dPWM) < PWM_swing_abs) // это неравенство начинает работать, только когда подбираемся current_PWM к target_PWM. Тогда и начинают работать качели.
+			{
+				dPWM = PWM_swing_abs*my_sign(dPWM);
+			}
+		}	
+		
+		
+		current_PWM += dPWM;
+	//*********************************************
+		if (debug_serial_print_1)
+		{	
+			Serial.print("dt: ");
+			Serial.println(dt);
+			Serial.print("target_PWM: ");
+			Serial.println(target_PWM);	
+		}
+		
+		if (debug_serial_print_dPWM)
+		{			
+		//	Serial.print("dPWM: ");
+			Serial.println(dPWM);
+		}
+
+	}
 	
-	if (debug_serial_print_vchart_PWM)
+	if (debug_serial_print_vchart_current_PWM)
 	{	
-		Serial.println("val_current_PWM");
+	//	Serial.println("val_current_PWM");
 		Serial.println(current_PWM);
-		Serial.println(millis());
+	//	Serial.println(millis());
 	}    
 	
 	return current_PWM;
+}
+
+float Machine_room::calculate_new_min_dPWM_swing_abs(float target_PWM, float min_dPWM_dtarget_PWM, unsigned long dt)
+{
+	return fabsf(target_PWM*min_dPWM_dtarget_PWM)*dt/time_for_commands_execution_from_stop_state;
 }
 
 void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_dPWM )
@@ -253,13 +310,19 @@ void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_d
 	
 	if ((w==0)&&(v != 0))
 	{
-		target_PWM_right = v / dv_dPWM;   // как  оно может быть типа int ,  если его значение определяется делением?!!
+		target_PWM_right = v / dv_dPWM; 
 		target_PWM_left = target_PWM_right;
 	}		
 	else if ((v==0)&&(w!=0))
 	{
 		target_PWM_right = 3.14*d_beatween_wheels*w/360/2/dv_dPWM;
 		target_PWM_left = - target_PWM_right;
+	}
+
+	else if ((v==0)&&(w==0))
+	{
+		target_PWM_right = 0;
+		target_PWM_left = 0;
 	}
 	
 	if (target_PWM_right == 0)
@@ -275,14 +338,13 @@ void Motion_model_of_the_car::calculate_new_target_PWMs(int v, int w, float dv_d
 			Serial.print("target_PWM_right: ");
 			Serial.println(target_PWM_right);
 		}
-	//	delay(3000);
 	}
 	
-	if (debug_serial_print_vchart_PWM)
+	if (debug_serial_print_target_PWM)
 	{	
-		Serial.println("val_target_PWM_right");
+	//	Serial.println("val_target_PWM_right");
 		Serial.println(target_PWM_right);
-		Serial.println(millis());
+	//	Serial.println(millis());
 	}	
 }
 
@@ -315,6 +377,27 @@ float Motion_model_of_the_car::tell_target_PWM_left()
 float Motion_model_of_the_car::tell_target_PWM_right()
 {
 	return target_PWM_right;
+}
+
+
+void Motion_model_of_the_car::update_new_target_PWMs_for_swing()
+{
+	if (fabsf(target_PWM_left)> max_target_PWM_with_swing)
+	{
+		target_PWM_left = max_target_PWM_with_swing*my_sign(target_PWM_left);
+	}
+	
+	if (fabsf(target_PWM_right)> max_target_PWM_with_swing)
+	{
+		target_PWM_right = max_target_PWM_with_swing*my_sign(target_PWM_right);
+	}
+	
+	if (debug_serial_print_target_PWM_with_swing)
+	{	
+	//	Serial.println("val_target_PWM_right_with_swing");
+		Serial.println(target_PWM_right);
+	//	Serial.println(millis());
+	}	
 }
 
 void Mpu_values::mpu_init()
@@ -400,7 +483,7 @@ float Mpu_values::tell_t_previous_acc_was_gotten()
 	return t_previous_acc_was_gotten;
 }
 
-void Mpu_values::getAccelerationsValues()
+int Mpu_values::getAccelerationsValues()
 {
 	mpuIntStatus = mpu.getIntStatus();
    
@@ -412,10 +495,13 @@ void Mpu_values::getAccelerationsValues()
 	{
 		// reset so we can continue cleanly
 		mpu.resetFIFO();
+		
+		
 		if (debug_serial_print_FIFO_overflow)
 		{	
 			Serial.println(F(" ************************************* FIFO overflow! ****************"));
 		}
+		return (2);
 		
 	// otherwise, check for DMP data ready interrupt (this should happen frequently)
 	} 
@@ -433,21 +519,18 @@ void Mpu_values::getAccelerationsValues()
 		mpu.dmpGetAccel(&aa, fifoBuffer);
 		mpu.dmpGetGravity(&gravity, &q);
 		mpu.dmpGetLinearAccel(&aaReal, &aa, &gravity);
-/*		Serial.print("areal\t");
-		Serial.print(aaReal.x);
-		Serial.print("\t");
-		
-*/		if (debug_serial_print_vchart_acc)
+
+		if (debug_serial_print_vchart_acc)
 		{
-			Serial.println("val");
-			Serial.println(aaReal.y);
+		//	Serial.println("val");
+			Serial.print(aaReal.y);
+			Serial.print(" // ");
 			Serial.println(millis());
 			
 		}
-		
-/*		Serial.println(aaReal.z);
-*/
-	}       
+		return (1);
+	} 
+	else return (0);
 }
 
 void Instantaneous_velocity_calculator::velocity_calculatorInit()
@@ -468,7 +551,7 @@ void Instantaneous_velocity_calculator::clear_sum_velocity()
 
 void Instantaneous_velocity_calculator::calculate_inst_velocity()
 {
-	inst_velocity = (mpu_val.tell_t_new_acc_was_gotten()-mpu_val.tell_t_previous_acc_was_gotten())*(mpu_val.tell_acc_y()+mpu_val.tell_acc_y_previous())/2000;  // 2000 - это  на сколько помню просто коэффициент перевода данных акселлерометра в м/с или см/с...
+	inst_velocity = (mpu_val.tell_acc_y()+mpu_val.tell_acc_y_previous())*(mpu_val.tell_t_new_acc_was_gotten()-mpu_val.tell_t_previous_acc_was_gotten())/2000;  // 2000 - это  на сколько помню просто коэффициент перевода данных акселлерометра в м/с или см/с...
 }
 
 void Instantaneous_velocity_calculator::sum_inst_velocity()
@@ -486,12 +569,12 @@ void Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu)
 	v_calculator.calculate_inst_velocity();
 	v_calculator.sum_inst_velocity();
 	
-	if (debug_serial_print_1)
+/*	if (debug_serial_print_1)
 	{
 		Serial.print("sum vel: ");
 		Serial.println(v_calculator.tell_sum_velocity());
 	}
-	
+*/	
 	if ((millis() - t_mes_start) > duration_t_mes_inst_velocity)
 	{
 		if (debug_serial_print_1)
@@ -543,16 +626,36 @@ Simple_Kalman_values Simple_Kalman_filter::simple_Kalman_filter_step(Simple_Kalm
 	return val;
 }
 
-Simple_Kalman_values Monitoring_feedback_circuit::calculate_new_dv_dPWM_of_mpu_Kalman()
+Simple_Kalman_values Monitoring_feedback_circuit::calculate_new_EST_dv_dPWM_of_mpu_Kalman(float v_target_of_center)
 {
-	Simple_Kalman_filter kalman;
-	dv_dPWM_simple_Kalman_values = kalman.simple_Kalman_filter_step (dv_dPWM_simple_Kalman_values, dv_dPWM_of_mpu,  MEA_dv_dPWM_of_mpu_error);
+	if (v_target_of_center!=0)
+	{
+		Simple_Kalman_filter kalman;
+		Simple_Kalman_values old_dv_dPWM_simple_Kalman_values = dv_dPWM_simple_Kalman_values;
+		dv_dPWM_simple_Kalman_values = kalman.simple_Kalman_filter_step (dv_dPWM_simple_Kalman_values, dv_dPWM_of_mpu,  MEA_dv_dPWM_of_mpu_error);
+		
+		if (fabsf(dv_dPWM_simple_Kalman_values.EST) > max_EST_dv_dPWM_of_mpu_abs)
+		{
+			dv_dPWM_simple_Kalman_values.EST = max_EST_dv_dPWM_of_mpu_abs*my_sign(dv_dPWM_simple_Kalman_values.EST);
+			dv_dPWM_simple_Kalman_values.Eest = old_dv_dPWM_simple_Kalman_values.Eest;		
+		}
+		else if (fabsf(dv_dPWM_simple_Kalman_values.EST) < fabsf(v_target_of_center/max_target_PWM))
+		{
+			dv_dPWM_simple_Kalman_values.EST = fabsf(v_target_of_center/max_target_PWM)*my_sign(dv_dPWM_simple_Kalman_values.EST);
+			dv_dPWM_simple_Kalman_values.Eest = old_dv_dPWM_simple_Kalman_values.Eest;
+		}
+	}
 	
 	if (debug_serial_print_dv_dPWM_Kalman)
 	{	
-		Serial.println("val_dv_dPWM_Kalman");
+	//	Serial.println("val_dv_dPWM_Kalman");
 		Serial.println(dv_dPWM_simple_Kalman_values.EST);
-		Serial.println(millis());
+	//	Serial.println(millis());
 	}    
+}
+
+float Monitoring_feedback_circuit::tell_EST_dv_dPWM_of_mpu_Kalman()
+{
+	return dv_dPWM_simple_Kalman_values.EST;
 }
 		

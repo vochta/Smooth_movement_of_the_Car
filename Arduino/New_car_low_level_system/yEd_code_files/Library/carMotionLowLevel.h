@@ -4,18 +4,14 @@
 
 //*************************** Includes begin *********************************
 #include "Arduino.h"
-#include <StandardCplusplus.h>
-#include <vector>
+//#include <StandardCplusplus.h>
+//#include <vector>
 
 #include <SPI.h>
 #include <VirtualWire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-
-// I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
-// for both classes must be in the include path of your project
-#include "I2Cdev.h"
 
 // I2Cdev and MPU6050 must be installed as libraries, or else the .cpp/.h files
 // for both classes must be in the include path of your project
@@ -43,15 +39,21 @@
 
 
 //*************************** Constants begin *********************
-#define def_max_PWM 255.0
-#define def_start_v_target_of_center 0
-#define def_time_for_commands_execution_from_stop_state 200// миллисекунды
-#define def_duration_t_mes_inst_velocity 100// миллисекунды
-#define def_start_EST_dv_dPWM_of_mpu 40.0/90.0 //def start
+#define def_max_PWM 250.0
+#define def_start_v_target_of_center 0.0
+#define def_time_for_commands_execution_from_stop_state 400// миллисекунды
+#define def_duration_t_mes_inst_velocity 60// миллисекунды
+#define def_start_EST_dv_dPWM_of_mpu 40.0/110.0 //def start   ??? правильно ли считает деление в def
 #define def_d_beatween_wheels 20  // 20cm
 
-#define def_start_EST_dv_dPWM_of_mpu_Kalman_error 0.5 // error in estimate
-#define def_start_MEA_dv_dPWM_of_mpu_error 15.0 // error in measurement
+#define def_start_Eest_dv_dPWM_of_mpu_Kalman 0.5 // error in estimate
+#define def_start_Emea_dv_dPWM_of_mpu 0.1 // error in measurement
+#define def_min_dPWM_dtarget_PWM 0.1 //Если шаг PWM меньше какой части target_PWM качать шаг PWM
+
+#define def_PWM_with_swing false // нужно ли использовать функцию "качелей" при расчете нового шага PWM
+#define def_max_EST_dv_dPWM_of_mpu_abs 1.0 // максимальное EST_dv_dPWM_of_mpu, если расчетное больше по модулю - ставится максимальное со знаком рассчетного. Значение устанавливается эмпирически, движение по гладкому полу
+
+
 
 // Begin motors driver (Monster shield) pins
 #define def_motor_left_driver_pinA_id 7
@@ -75,8 +77,13 @@
 // Begin reciever pins
 #define def_good_message_recieved_pin 12	// LED pin
 #define def_rx_pin 23						// data pin
-
 // End reciever pins
+
+// Begin transmitter pins
+#define def_message_transmitting_pin 13	// LED pin
+#define def_tx_pin 24					// data pin
+// End transmitter pins
+
 
 
 // Begin LCD pins
@@ -111,26 +118,46 @@
 const bool debug_serial_print_1 = 0; // определяет отправлять или нет обущую отладочную информацию в последовательный порт
 
 // определяет отправлять или нет отладочную информацию для вывода графика в последовательный порт
-const bool debug_serial_print_vchart_sum_v = 1;  // скорость в график отправлять
+const bool debug_serial_print_vchart_sum_v = 0;  // скорость в график отправлять
 const bool debug_serial_print_vchart_acc = 0;  // ускорение в график отправлять
 
 const bool debug_serial_print_FIFO_overflow = 1;  // Выводить ли в последовательный порт сообщение о переполнении буфера акселлерометра
 
-const bool debug_serial_print_vchart_PWM = 1;  // определяет отправлять или нет отладочную информацию для вывода разных PWM и dPWM в последовательный порт для формы с графиком
+const bool debug_serial_print_vchart_PWM = 0;  // определяет отправлять или нет отладочную информацию для вывода разных PWM и dPWM в последовательный порт для формы с графиком
+
+const bool debug_serial_print_vchart_current_PWM = 0;
+
+const bool debug_serial_print_target_PWM = 0;
+
+const bool debug_serial_print_target_PWM_with_swing = 0;
+
+const bool debug_serial_print_dPWM = 0;
 
 const bool debug_radioStation = 0; // отладка приема и обработки команд
 
-#define debug_serial_print_dv_dPWM_Kalman 1 // отладка расчета dv_dPWM с помощью фильтра Калмана
+#define debug_serial_print_dv_dPWM_Kalman 0 // отладка расчета dv_dPWM с помощью фильтра Калмана
 
 // ************************** End Debug flags *******************************************************
 
 
+float my_sign(float x)
+{
+	if (x>=0) 
+	{
+		return 1.0;
+	}
+	else return -1.0;
+}
+
 class radioStation
 {
-		const char good_message_recieved_pin = def_good_message_recieved_pin; // LED pin
-		const char rx_pin = def_rx_pin; // data pin
+		const char good_message_recieved_pin = def_good_message_recieved_pin; // reciever LED pin
+		const char rx_pin = def_rx_pin; // reciever data pin
 		String command_message = ""; 
 
+		const char message_transmitting_pin = def_message_transmitting_pin;	// transmitter LED pin
+		const char tx_pin = def_tx_pin; // transmitter data pin
+		
 		int v_target_of_center = def_start_v_target_of_center;
 		int w_target_of_car = 0;
 
@@ -139,6 +166,8 @@ class radioStation
 	public:
 		void radioInit();
 		char recieveCommand();
+		void sendMassage(char message[30]);
+		
 		
 		String tell_command_message();
 		int tell_v_target_of_center();
@@ -164,7 +193,7 @@ class carDisplay
 };
 
 
-class Motor
+class Motor  // в Machine_room создаю два таких мотора - левый и правый - и дальше работаю с ними отдельно.
 {                
 		byte motor_driver_pinA_id;
 		byte motor_driver_pinB_id;
@@ -193,13 +222,15 @@ class Machine_room
 {
 		const int time_for_commands_execution_from_stop_state = def_time_for_commands_execution_from_stop_state;
 				
-
 		void change_arduino_PWM_frequancy_to_4000 ();
+		
+		float calculate_new_min_dPWM_swing_abs(float target_PWM, float min_dPWM_dtarget_PWM, unsigned long dt);
 		
 	public:
 		Motor right_motor, left_motor;
 		void machine_roomInit();
-		float calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM);
+		float calculate_new_PWM(float current_PWM, unsigned long t_PWM_was_set, float target_PWM, const bool PWM_with_swing = def_PWM_with_swing);
+		
 };
 
 class Motion_model_of_the_car
@@ -209,6 +240,7 @@ class Motion_model_of_the_car
 		float target_PWM_right = 0.0;
 		float PWM_of_center = 0.0;
 		float PWM_of_mpu = 0.0;
+		float max_target_PWM_with_swing = def_max_PWM*1/(1+def_min_dPWM_dtarget_PWM); // Максимальное значение target_PWM с запасом для качалки 
 
 	public:
 		void calculate_new_target_PWMs(int v, int w, float dv_dPWM);
@@ -218,6 +250,7 @@ class Motion_model_of_the_car
 		float tell_PWM_of_center();
 		float calculate_PWM_of_mpu(float PWM_right, float PWM_left);
 		float tell_PWM_of_mpu();
+		void update_new_target_PWMs_for_swing();
 };		
 
 class Mpu_values
@@ -244,7 +277,7 @@ class Mpu_values
 		
 	public:
 		void mpu_init();
-		void getAccelerationsValues();
+		int getAccelerationsValues(); // возвращает 1 в случае загрузки новых данных, 0 в случае отсутствия новых данных, и 2 в случае FIFO_overflow
 		float tell_acc_y();
 		float tell_acc_y_previous();
 		float tell_t_new_acc_was_gotten();
@@ -286,17 +319,17 @@ class Monitoring_feedback_circuit
 		float dv_dPWM_of_mpu = def_start_EST_dv_dPWM_of_mpu; 
 		float PWM_mpu_start;
 
-		Simple_Kalman_values dv_dPWM_simple_Kalman_values = {def_start_EST_dv_dPWM_of_mpu, def_start_EST_dv_dPWM_of_mpu_Kalman_error}; // два значения для получения их из расчета и хранения до сдедующей итерации, где они нужны
-		
-		
+		Simple_Kalman_values dv_dPWM_simple_Kalman_values = {def_start_EST_dv_dPWM_of_mpu, def_start_Eest_dv_dPWM_of_mpu_Kalman}; // два значения для получения их из расчета и хранения до сдедующей итерации, где они нужны
+	
 		/*
 		float EST_dv_dPWM_of_mpu_Kalman = def_start_EST_dv_dPWM_of_mpu; // estimate in Kalman filter (EST). Calculate dv_dPWM_of_mpu using simple Kalman filter 
-		float EST_dv_dPWM_of_mpu_Kalman_error = def_start_EST_dv_dPWM_of_mpu_Kalman_error; // error in estimate dv_dPWM_of_mpu, step t-1
+		float EST_dv_dPWM_of_mpu_Kalman_error = def_start_Eest_dv_dPWM_of_mpu_Kalman; // error in estimate dv_dPWM_of_mpu, step t-1
 		*/
-		const float MEA_dv_dPWM_of_mpu_error = def_start_MEA_dv_dPWM_of_mpu_error; // error in measurement dv_dPWM_of_mpu, const 
-		
-
-		
+		const float MEA_dv_dPWM_of_mpu_error = def_start_Emea_dv_dPWM_of_mpu; // error in measurement dv_dPWM_of_mpu, const 
+		const float max_EST_dv_dPWM_of_mpu_abs = def_max_EST_dv_dPWM_of_mpu_abs;	
+		//float min_EST_dv_dPWM_of_mpu;
+		const int max_target_PWM = def_max_PWM;
+	
 		unsigned long t_mes_start;
 		float v_mes_start;
 		Instantaneous_velocity_calculator v_calculator;
@@ -305,7 +338,8 @@ class Monitoring_feedback_circuit
 		void monitoringInit();
 		void calculate_new_dv_dPWM_of_mpu(float PWM_of_mpu);
 		float tell_dv_dPWM_of_mpu();
-		Simple_Kalman_values calculate_new_dv_dPWM_of_mpu_Kalman();
+		Simple_Kalman_values calculate_new_EST_dv_dPWM_of_mpu_Kalman(float v_target_of_center);
+		float tell_EST_dv_dPWM_of_mpu_Kalman();
 		
 };
 

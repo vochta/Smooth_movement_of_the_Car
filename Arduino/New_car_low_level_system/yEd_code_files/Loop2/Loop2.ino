@@ -53,7 +53,7 @@ void loop()
 	
 	
 	// не правильно вызывать калмана в каждом цикле, тк нет еще sum_v и соответственно нет dv_dPWM и Калман просто уменьшает ошибку ожидания, необоснованно и бесполезно
-	monitoring.calculate_new_EST_dv_dPWM_of_mpu_Kalman(radio.tell_v_target_of_center());
+//	monitoring.calculate_new_EST_dv_dPWM_of_mpu_Kalman(radio.tell_v_target_of_center());
 	
 	
 }
